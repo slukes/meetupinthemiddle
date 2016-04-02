@@ -4,7 +4,7 @@
 
   <groupId>com.meetupinthemiddle</groupId>
   <artifactId>meetupinthemiddle</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.2</version>
   <packaging>war</packaging>
 
   <name>meetup</name>
@@ -50,15 +50,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m5.1</version>
-        <configuration>
-          <!--We just want to handle version numbers and merging.-->
-          <noDeploy>true</noDeploy>
-        </configuration>
       </plugin>
     </plugins>
   </build>
