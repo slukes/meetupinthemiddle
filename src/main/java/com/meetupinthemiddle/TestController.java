@@ -2,7 +2,6 @@ package com.meetupinthemiddle;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -10,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class TestController {
-  @RequestMapping("/test/{text}")
-  public String index(@PathVariable("text") String text, Model model){
-    model.addAttribute("text", text);
+  @RequestMapping("/")
+  public String index(Model model){
     return "index";
   }
 }
