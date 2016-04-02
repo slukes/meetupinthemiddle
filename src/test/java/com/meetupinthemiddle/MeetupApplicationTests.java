@@ -13,7 +13,6 @@ public class MeetupApplicationTests {
 
 	@Test
 	public void contextLoads() {
-    assert true;
 	}
 
 }
