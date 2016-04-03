@@ -12,9 +12,20 @@ html, body {
 #overlay {
     position: absolute;
     height: 80%;
-    width: 30%;
     z-index: 1;
     background: rgba(255, 255, 255, 0.5);
+}
+
+@media screen and (max-device-width: 480px) {
+    #overlay{
+        width: 100%;
+    }
+}
+
+@media screen and (min-device-width: 481px) {
+    #overlay{
+        width: 30%;
+    }
 }
 
 hr{
