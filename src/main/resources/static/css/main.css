@@ -1,0 +1,22 @@
+#map {
+    height: 78%;
+    /*position: absolute;*/
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#overlay {
+    position: absolute;
+    height: 80%;
+    width: 30%;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+hr{
+    margin-bottom: 0;
+}
