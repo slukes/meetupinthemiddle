@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>MeetUpInTheMiddle</title>
     <link rel="stylesheet" type="text/css" th:href="@{webjars/bootstrap/3.3.6/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{css/main.css}"/>
-    <script th:src="@{webjars/jquery/2.2.2/jquery.min.js}"></script>
+    <script th:src="@{webjars/jquery/2.2.2/jquery.js}"></script>
     <script th:src="@{webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
     <script th:src="@{js/main.js}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap"
-            async
-            defer></script>
+            async defer></script>
 </head>
 <body>
 <header>
@@ -19,7 +19,7 @@
         <img id="logo" class="col-md-1" th:src="@{img/imageSquare.jpg}" src="../static/img/imageSquare.jpg"/>
 
         <div id="titles" class="col-md-10">
-            <h1>Meet Up in the Middle</h1>
+            <h1>MeetUpInTheMiddle</h1>
             <!--TODO put actual slogan if there will be one-->
             <em>Some text will go here ...</em>
         </div>
@@ -30,16 +30,37 @@
 </header>
 <section id="overlay">
     <!--TODO put instructions here.-->
+    <section class="glyphSpace">
     <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true" href="#"
           data-toggle="tooltip" data-placement="bottom"
           title="Detailed instructions regarding how the page should be used will be included here."></span>
-    <section>
-    <form action="#">
-        <input type="text" name="name" placeholder="name"/>
-        <input type="text" placeholder="name"/>
-    </form>
     </section>
+
+    <form action="#" method="post" role="form" id="newPersonForm">
+        <input class="form-control" type="text" id="newName" placeholder="name"/>
+        <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>
+        <select class="form-control" id="newMode">
+            <option value="Driving">Driving</option>
+            <option value="Public Transport">Public Transport</option>
+        </select>
+        <section class="glyphSpace">
+            <span id="add-person" href="#" class="glyphicon glyphicon-plus pull-left"></span>
+        </section>
+        <table class="table" id="peopleTable">
+            <tbody>
+            </tbody>
+        </table>
+        <select class="form-control">
+            <option value="restaurants">Restaurants in the middle</option>
+            <option value="pubs">Pubs in the middle</option>
+            <option value="meeting">Meeting rooms in the middle</option>
+        </select>
+        <button type="submit" value="submit" id="submitButton" class="btn btn-primary btn-block">MeetUpInTheMiddle!</button>
+    </form>
 </section>
 <section class="" id="map"></section>
+<footer>
+    <a href="/contact">Contact</a> | <a href="/terms">Terms of Service</a>
+</footer>
 </body>
 </html>
