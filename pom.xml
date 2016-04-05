@@ -80,24 +80,24 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>com.github.searls</groupId>
-        <artifactId>jasmine-maven-plugin</artifactId>
-        <version>2.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <preloadSources>bootstrap.min.js</preloadSources>
-          <preloadSources>vendors/jquery-2.2.3.min.js</preloadSources>
-          <jsSrcDir>src/main/resources/static/js</jsSrcDir>
-          <jsTestSrcDir>src/test/js</jsTestSrcDir>
-        </configuration>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>com.github.searls</groupId>-->
+        <!--<artifactId>jasmine-maven-plugin</artifactId>-->
+        <!--<version>2.0</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<goals>-->
+              <!--<goal>test</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+        <!--<configuration>-->
+          <!--<preloadSources>bootstrap.min.js</preloadSources>-->
+          <!--<preloadSources>vendors/jquery-2.2.3.min.js</preloadSources>-->
+          <!--<jsSrcDir>src/main/resources/static/js</jsSrcDir>-->
+          <!--<jsTestSrcDir>src/test/js</jsTestSrcDir>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
     </plugins>
 
   </build>
