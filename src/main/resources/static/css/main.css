@@ -14,13 +14,33 @@ html, body {
     height: 80%;
     z-index: 1;
     background: rgba(255, 255, 255, 0.8);
-    width: 20%;
     padding: 5px 5px 5px 5px;
     overflow: scroll;
 }
 
+@media screen and (min-width: 480px) {
+    h1{
+        font-size: 2em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #overlay {
+        width: 100%;
+    }
+
+    h1{
+        font-size: 1.5em;
+    }
+}
+
 hr{
     margin-bottom: 0;
+}
+
+#logo{
+    max-height: 10%;
+    float:left;
 }
 
 #add-person{
@@ -47,4 +67,8 @@ hr{
 
 .glyphSpace{
     margin-bottom: 25px;
+}
+
+.row{
+    margin: 0;
 }
