@@ -45,16 +45,39 @@ function initMap() {
     }
 
     function addRowToPeopleTable(name, from, mode) {
-        $('#peopleTable').find('> tbody:last-child').append(
-            '<tr>' +
-            '<td><span class="glyphicon glyphicon-map-marker"></span></td>' +
-            '<td><input type="hidden" class="name" name="name[' + personCount + ']" value="' + name + '" />' + name + '</td>' +
-            '<td><input type="hidden" class="from" name="from[' + personCount + ']" value="' + from + '" />' + from + '</td>' +
-            '<td><input type="hidden" class="mode" name="mode[' + personCount + ']" value="' + mode + '" />' + mode + '</td>' +
-            '<td><span class="removePerson glyphicon glyphicon-remove" id="remove[' + personCount + ']"></span></td>' +
-            '</tr>'
-        )
-        ;
+        $('#peopleTable').append(
+            $(
+                '<tr>' +
+                '<td><span class="glyphicon glyphicon-map-marker"></span></td>' +
+                '<td><input type="hidden" class="name" name="name[' + personCount + ']" value="' + name + '" />' + name + '</td>' +
+                '<td><input type="hidden" class="from" name="from[' + personCount + ']" value="' + from + '" />' + from + '</td>' +
+                '<td><input type="hidden" class="mode" name="mode[' + personCount + ']" value="' + mode + '" />' + mode + '</td>' +
+                '<td><span class="removePerson glyphicon glyphicon-remove" id="remove[' + personCount + ']"></span></td>' +
+                '</tr>'
+            ).click(function (e) {
+                var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
+                markers[idToRemove].setMap(null);
+                bounds = new google.maps.LatLngBounds();
+                markers.splice(idToRemove, 1);
+                markers.forEach(function (marker) {
+                    bounds.extend(marker.getPosition());
+                });
+                centreMap();
+                $('#peopleTable').find('tr').each(function () {
+                    if (this.rowIndex > idToRemove) {
+                        var newIndex = this.rowIndex - 1;
+                        $(this).find('.name').attr('name', 'name[' + newIndex + ']');
+                        $(this).find('.from').attr('name', 'from[' + newIndex + ']');
+                        $(this).find('.mode').attr('name', 'mode[' + newIndex + ']');
+                        $(this).find('.removePerson').attr('id', 'remove[' + newIndex + ']');
+
+                        markers[newIndex] = markers[this.rowIndex];
+                    }
+                });
+                $(this).closest('tr').remove();
+                personCount--;
+            })
+        );
     }
 
     function centreMap() {
@@ -70,28 +93,4 @@ function initMap() {
             map.fitBounds(bounds);
         }
     }
-
-    $('tr').on('click', '.removePerson', function (event) {
-        var idToRemove = event.target.id.replace(/remove\[(\d)\]/, "$1");
-        markers[idToRemove].setMap(null);
-        bounds = new google.maps.LatLngBounds();
-        markers.splice(idToRemove, 1);
-        markers.forEach(function (marker) {
-            bounds.extend(marker.getPosition());
-        });
-        centreMap();
-        $('#peopleTable').find('tr').each(function () {
-            if (this.rowIndex > idToRemove) {
-                var newIndex = this.rowIndex - 1;
-                $(this).find('.name').attr('name', 'name[' + newIndex + ']');
-                $(this).find('.from').attr('name', 'from[' + newIndex + ']');
-                $(this).find('.mode').attr('name', 'mode[' + newIndex + ']');
-                $(this).find('.removePerson').attr('id', 'remove[' + newIndex + ']');
-
-                markers[newIndex] = markers[this.rowIndex];
-            }
-        });
-        event.target.closest('tr').remove();
-        personCount--;
-    });
 }
