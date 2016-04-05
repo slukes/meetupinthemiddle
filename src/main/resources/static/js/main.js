@@ -89,7 +89,7 @@ function initMap() {
             map.setZoom(10);
         } else {
             //TODO experiement to find some sensible value for this.
-            //TODO can we take into account the type of the first location??
+            //TODO can we take into account the type of the first location?
             map.fitBounds(bounds);
         }
     }
