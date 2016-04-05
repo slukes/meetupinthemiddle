@@ -71,7 +71,7 @@ function initMap() {
         }
     }
 
-    $('body').on('click', '.removePerson', function (event) {
+    $('tr').on('click', '.removePerson', function (event) {
         var idToRemove = event.target.id.replace(/remove\[(\d)\]/, "$1");
         markers[idToRemove].setMap(null);
         bounds = new google.maps.LatLngBounds();
