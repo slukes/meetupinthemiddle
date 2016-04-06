@@ -43,11 +43,6 @@ hr{
     float:left;
 }
 
-#add-person{
-    color: default;
-    cursor: default;
-}
-
 #peopleTable td{
     border : none
 }
@@ -56,9 +51,17 @@ hr{
     cursor: help;
 }
 
+#add-person{
+    cursor: pointer;
+}
+
+.disabled#add-person {
+    cursor: not-allowed;
+}
+
 .removePerson{
     color: red;
-    cursor: default;
+    cursor: hand;
 }
 
 .form-control{

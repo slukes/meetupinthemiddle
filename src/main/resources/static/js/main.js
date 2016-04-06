@@ -11,17 +11,32 @@ function initMap() {
     });
 
     var personCount = 0;
+    var newName = $("#newName"),
+        newFrom = $("#newFrom");
+
+    var haveNewValue = false;
+
+    $(newName).add(newFrom).on('input', function (e) {
+        haveNewValue = ($.trim(newName.val()) + $.trim(newFrom.val())).length > 0;
+        if (haveNewValue) {
+            $('#add-person').removeClass('disabled');
+        }
+    });
+
     $('#add-person').click(function (e) {
-        e.preventDefault();
-        //TODO validate the inputs
+        if (!haveNewValue) return;
         var name = $('#newName').val();
         var location = $('#newFrom').val();
         var mode = $('#newMode').val();
         addRowToPeopleTable(name, location, mode);
         addPinToMap(location, name);
         $('#newPersonForm')[0].reset();
+        haveNewValue = false;
+        $('#add-person').addClass('disabled');
         personCount++;
-        return false;
+        if (personCount >= 2) {
+            $('#submitButton').prop('disabled', false);
+        }
     });
 
     var bounds = new google.maps.LatLngBounds();
@@ -45,40 +60,44 @@ function initMap() {
     }
 
     function addRowToPeopleTable(name, from, mode) {
-        $('#peopleTable').append(
-            $(
-                '<tr>' +
-                '<td><span class="glyphicon glyphicon-map-marker"></span></td>' +
-                '<td><input type="hidden" class="name" name="name[' + personCount + ']" value="' + name + '" />' + name + '</td>' +
-                '<td><input type="hidden" class="from" name="from[' + personCount + ']" value="' + from + '" />' + from + '</td>' +
-                '<td><input type="hidden" class="mode" name="mode[' + personCount + ']" value="' + mode + '" />' + mode + '</td>' +
-                '<td><span class="removePerson glyphicon glyphicon-remove" id="remove[' + personCount + ']"></span></td>' +
-                '</tr>'
-            ).click(function (e) {
-                var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
-                markers[idToRemove].setMap(null);
-                bounds = new google.maps.LatLngBounds();
-                markers.splice(idToRemove, 1);
-                markers.forEach(function (marker) {
-                    bounds.extend(marker.getPosition());
-                });
-                centreMap();
-                $('#peopleTable').find('tr').each(function () {
-                    if (this.rowIndex > idToRemove) {
-                        var newIndex = this.rowIndex - 1;
-                        $(this).find('.name').attr('name', 'name[' + newIndex + ']');
-                        $(this).find('.from').attr('name', 'from[' + newIndex + ']');
-                        $(this).find('.mode').attr('name', 'mode[' + newIndex + ']');
-                        $(this).find('.removePerson').attr('id', 'remove[' + newIndex + ']');
+        var person = {
+            name: name,
+            from: from,
+            mode: mode,
+            personCount: personCount
+        };
 
-                        markers[newIndex] = markers[this.rowIndex];
-                    }
-                });
-                $(this).closest('tr').remove();
-                personCount--;
-            })
-        );
+        $.get('mustache/personTableRow.html', function (template) {
+            $('#peopleTable').append(Mustache.to_html(template, person));
+        });
     }
+
+    $('body').on('click', '.removePerson', function (e) {
+        var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
+        markers[idToRemove].setMap(null);
+        bounds = new google.maps.LatLngBounds();
+        markers.splice(idToRemove, 1);
+        markers.forEach(function (marker) {
+            bounds.extend(marker.getPosition());
+        });
+        centreMap();
+        $('#peopleTable').find('tr').each(function () {
+            if (this.rowIndex > idToRemove) {
+                var newIndex = this.rowIndex - 1;
+                $(this).find('.name').attr('name', 'name[' + newIndex + ']');
+                $(this).find('.from').attr('name', 'from[' + newIndex + ']');
+                $(this).find('.mode').attr('name', 'mode[' + newIndex + ']');
+                $(this).find('.removePerson').attr('id', 'remove[' + newIndex + ']');
+
+                markers[newIndex] = markers[this.rowIndex];
+            }
+        });
+        $(this).closest('tr').remove();
+        personCount--;
+        if (personCount < 2) {
+            $('#submitButton').prop('disabled', true);
+        }
+    });
 
     function centreMap() {
         if (markers.length == 0) {
@@ -88,8 +107,6 @@ function initMap() {
             map.setCenter(markers[0].getPosition());
             map.setZoom(10);
         } else {
-            //TODO experiement to find some sensible value for this.
-            //TODO can we take into account the type of the first location?
             map.fitBounds(bounds);
         }
     }

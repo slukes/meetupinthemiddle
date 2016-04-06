@@ -18,6 +18,7 @@ public class LoggingAspect {
   /**
    * When trace logging is enabled this around advice will log
    * entry, arguments and exit from every method for debugging purposes
+   *
    * @param joinPoint method call intercepted
    * @return the result from the jointpoint's underlying method
    * @throws Throwable if thrown by the underlying method
@@ -42,7 +43,8 @@ public class LoggingAspect {
 
   private String argsAsString(final Object[] args) {
     return Arrays.stream(args)
-            .map(Object::toString)
-            .collect(Collectors.joining(", "));
+        .map(Object::toString)
+        .collect(Collectors.joining(", "));
   }
+
 }

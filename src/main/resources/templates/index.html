@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{css/main.css}"/>
     <script th:src="@{webjars/jquery/2.2.2/jquery.js}"></script>
     <script th:src="@{webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+    <script th:src="@{webjars/mustachejs/2.2.1/mustache.min.js}"></script>
     <script th:src="@{js/main.js}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap"
             async defer></script>
@@ -44,7 +45,7 @@
             <option value="Public Transport">Public Transport</option>
         </select>
         <section class="glyphSpace">
-            <span id="add-person" href="#" class="glyphicon glyphicon-plus pull-left"></span>
+            <span id="add-person" class="glyphicon glyphicon-plus pull-left disabled"></span>
         </section>
         <table class="table" id="peopleTable">
             <tbody>
@@ -55,7 +56,7 @@
             <option value="pubs">Pubs in the middle</option>
             <option value="meeting">Meeting rooms in the middle</option>
         </select>
-        <button type="submit" value="submit" id="submitButton" class="btn btn-primary btn-block">
+        <button type="submit" disabled value="submit" id="submitButton" class="btn btn-primary btn-block">
             MeetUpInTheMiddle!
         </button>
     </form>
