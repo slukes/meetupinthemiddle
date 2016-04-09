@@ -10,14 +10,23 @@
     <script th:src="@{webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
     <script th:src="@{webjars/mustachejs/2.2.1/mustache.min.js}"></script>
     <script th:src="@{js/main.js}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap&v=3&libraries=places&region=gb"
             async defer></script>
 </head>
 <body>
+<div id="fb-root"></div>
+<script>(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=222203271174707";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <header>
     <div class="row">
         <!--TODO change image for actual logo-->
-        <img id="logo" class="col-md-1" th:src="@{img/imageSquare.jpg}" src="../static/img/imageSquare.jpg"/>
+        <img id="logo" class="col-md-1" th:src="@{img/imageSquare.jpg}" alt="Meet Up In The Middle Logo"/>
 
         <div id="titles" class="col-md-10">
             <h1>MeetUpInTheMiddle</h1>
@@ -30,36 +39,53 @@
     </div>
 </header>
 <section id="overlay">
-    <!--TODO put instructions here.-->
-    <section class="glyphSpace">
-    <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true" href="#"
+    <section id="overlayContent">
+        <!--TODO put instructions here.-->
+        <section class="glyphSpace">
+    <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true"
           data-toggle="tooltip" data-placement="bottom"
           title="Detailed instructions regarding how the page should be used will be included here."></span>
-    </section>
-
-    <form action="#" method="post" role="form" id="newPersonForm">
-        <input class="form-control" type="text" id="newName" placeholder="name"/>
-        <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>
-        <select class="form-control" id="newMode">
-            <option value="Driving">Driving</option>
-            <option value="Public Transport">Public Transport</option>
-        </select>
-        <section class="glyphSpace">
-            <span id="add-person" class="glyphicon glyphicon-plus pull-left disabled"></span>
         </section>
-        <table class="table" id="peopleTable">
-            <tbody>
-            </tbody>
-        </table>
-        <select class="form-control">
-            <option value="restaurants">Restaurants in the middle</option>
-            <option value="pubs">Pubs in the middle</option>
-            <option value="meeting">Meeting rooms in the middle</option>
-        </select>
-        <button type="submit" disabled value="submit" id="submitButton" class="btn btn-primary btn-block">
-            MeetUpInTheMiddle!
-        </button>
-    </form>
+
+        <form action="#" method="post" role="form" id="newPersonForm">
+            <input class="form-control" type="text" id="newName" placeholder="name"/>
+            <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>
+            <select class="form-control" id="newMode">
+                <option value="Driving">Driving</option>
+                <option value="Public Transport">Public Transport</option>
+            </select>
+            <section class="glyphSpace">
+                <span id="add-person" class="glyphicon glyphicon-plus pull-left disabled"></span>
+            </section>
+            <table class="table" id="peopleTable">
+                <tbody>
+                </tbody>
+            </table>
+            <select class="form-control">
+                <option value="restaurants">Restaurants in the middle</option>
+                <option value="pubs">Pubs in the middle</option>
+                <option value="meeting">Meeting rooms in the middle</option>
+            </select>
+            <button type="button" disabled id="submitButton" class="btn btn-primary btn-block">
+                MeetUpInTheMiddle!
+            </button>
+        </form>
+    </section>
+    <section id="share">
+        <!--TODO Configure these-->
+        <!--TODO can this JS be moved to a seperate file??-->
+        <div class="fb-share-button" data-href="https://www.meetupinthemiddle.com" data-layout="button"></div>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="sam_lukes">Tweet</a>
+        <script>!function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+            if (!d.getElementById(id)) {
+                js = d.createElement(s);
+                js.id = id;
+                js.src = p + '://platform.twitter.com/widgets.js';
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+        }(document, 'script', 'twitter-wjs');</script>
+    </section>
 </section>
 <section class="" id="map"></section>
 <footer>

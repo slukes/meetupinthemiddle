@@ -17,7 +17,9 @@ function initMap() {
     var haveNewValue = false;
 
     $(newName).add(newFrom).on('input', function (e) {
-        haveNewValue = ($.trim(newName.val()) + $.trim(newFrom.val())).length > 0;
+        haveNewValue = $.trim(newName.val()).length > 0
+            && $.trim(newFrom.val()).length > 0;
+
         if (haveNewValue) {
             $('#add-person').removeClass('disabled');
         }
@@ -110,4 +112,21 @@ function initMap() {
             map.fitBounds(bounds);
         }
     }
+
+    //TODO restrict to UK
+    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('newFrom'), {componentRestrictions: {country: 'gb'}});
+
+    $('#submitButton').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/search',
+            contentType: 'application/json',
+            method: 'post',
+            success: function (data) {
+                console.log(data);
+                $('#overlayContent').html(data.html);
+            }
+        })
+    });
+    return false;
 }
