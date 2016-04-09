@@ -1,0 +1,31 @@
+<section xmlns:th="http://www.thymeleaf.org" id="overlayContent">
+    <h2>The middle is</h2>
+    <strong><em th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong>
+
+    <table class="table" id="peopleTable">
+        <tbody th:each="person : ${response.people}">
+        <tr class="personRow">
+            <td><span class="personMarker glyphicon glyphicon-map-marker"></span></td>
+            <td th:text="${person.name}"></td>
+            <td th:text="${person.from}"></td>
+            <td th:text="${person.travelTime} + ' minutes'"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3 th:text="'Local ' + ${response.poiType.text}"></h3>
+    <table id="peopleTable" class="table">
+        <tbody th:each="POI, itr : ${response.POIs}">
+        <tr>
+            <td>
+                <span th:text="${itr.count}"></span>
+                <span class="poiMarker glyphicon glyphicon-map-marker"></span>
+            </td>
+            <td th:text="${POI.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/" id="searchAgain" class="btn btn-primary btn-block">
+        MeetUpAgain!
+    </a>
+</section>

@@ -1,10 +1,10 @@
 package com.meetupinthemiddle;
 
+import com.meetupinthemiddle.Controllers.MainController;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
-import org.springframework.ui.ExtendedModelMap;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -14,15 +14,15 @@ public class LoggingAspectTest {
   @Test
   public void testPointCut() throws Throwable {
     //Given
-    TestController target = new TestController();
+    MainController target = new MainController();
     AspectJProxyFactory factory = new AspectJProxyFactory(target);
     LoggingAspect aspect = Mockito.mock(LoggingAspect.class);
     factory.addAspect(aspect);
-    TestController proxy = factory.getProxy();
+    MainController proxy = factory.getProxy();
     when(aspect.log(any(ProceedingJoinPoint.class))).thenReturn(null);
 
     //When
-    proxy.index(new ExtendedModelMap());
+    proxy.index();
 
     //Then
     verify(aspect).log(any(ProceedingJoinPoint.class));

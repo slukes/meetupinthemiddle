@@ -17,7 +17,9 @@ function initMap() {
     var haveNewValue = false;
 
     $(newName).add(newFrom).on('input', function (e) {
-        haveNewValue = ($.trim(newName.val()) + $.trim(newFrom.val())).length > 0;
+        haveNewValue = $.trim(newName.val()).length > 0
+            && $.trim(newFrom.val()).length > 0;
+
         if (haveNewValue) {
             $('#add-person').removeClass('disabled');
         }
@@ -110,4 +112,44 @@ function initMap() {
             map.fitBounds(bounds);
         }
     }
+
+    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('newFrom'),
+        {
+            componentRestrictions: {country: 'gb'}
+        });
+
+    $('#submitButton').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/search',
+            contentType: 'application/json',
+            method: 'post',
+            success: function (data) {
+                $('#overlayContent').html(data.html);
+                for (var i = 0; i < data.locations.length; i++) {
+                    var latLng = data.locations[i].geocode;
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(latLng.lat, latLng.lng),
+                        label: "" + (i + 1),
+                        clickable: true,
+                        map: map
+                    });
+                    const index = i;
+                    $.get('mustache/infowindow.html', function (template) {
+                        var infowindow = new google.maps.InfoWindow({
+                            content: Mustache.to_html(template, data.locations[index])
+                        });
+
+                        marker.addListener('click', function () {
+                            infowindow.open(map, marker);
+                        });
+                    });
+                    markers.push(marker);
+                    bounds.extend(marker.getPosition());
+                    centreMap();
+                }
+            }
+        })
+    });
+    return false;
 }

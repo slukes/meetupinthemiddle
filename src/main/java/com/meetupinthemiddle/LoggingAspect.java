@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-/**
- * Created by Sam Lukes on 02/04/16.
- */
 @Component
 @Aspect
 public class LoggingAspect {
@@ -46,5 +43,4 @@ public class LoggingAspect {
         .map(Object::toString)
         .collect(Collectors.joining(", "));
   }
-
 }
