@@ -44,6 +44,7 @@ function initMap() {
     var bounds = new google.maps.LatLngBounds();
     var geocoder = new google.maps.Geocoder();
     var markers = [];
+    var infowindows = [];
 
     function addPinToMap(location, name) {
         geocoder.geocode({'address': location}, function (results, status) {
@@ -126,9 +127,9 @@ function initMap() {
             method: 'post',
             success: function (data) {
                 $('#overlayContent').html(data.html);
-                for (var i = 0; i < data.locations.length; i++) {
-                    var latLng = data.locations[i].geocode;
-                    var marker = new google.maps.Marker({
+                for (var i = 0; i < data.pois.length; i++) {
+                    var latLng = data.pois[i].geocode;
+                    const marker = new google.maps.Marker({
                         position: new google.maps.LatLng(latLng.lat, latLng.lng),
                         label: "" + (i + 1),
                         clickable: true,
@@ -137,12 +138,24 @@ function initMap() {
                     const index = i;
                     $.get('mustache/infowindow.html', function (template) {
                         var infowindow = new google.maps.InfoWindow({
-                            content: Mustache.to_html(template, data.locations[index])
+                            content: Mustache.to_html(template, data.pois[index])
                         });
 
+                        infowindow.addListener('closeclick', function () {
+                            centreMap();
+                        });
+
+                        infowindows.push(infowindow);
+
                         marker.addListener('click', function () {
+                            infowindows.forEach(function (eachInfoWindow) {
+                                eachInfoWindow.close();
+                            });
+                            map.setCenter(marker.position);
+                            map.setZoom(15);
                             infowindow.open(map, marker);
                         });
+
                     });
                     markers.push(marker);
                     bounds.extend(marker.getPosition());

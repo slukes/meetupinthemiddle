@@ -1,6 +1,5 @@
 package com.meetupinthemiddle.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Response {
@@ -52,7 +51,7 @@ public class Response {
 
   public static class ResponseBuilder {
     private String html;
-    private List<POI> POIs = new ArrayList<>();
+    private List<POI> POIs;
     private CentrePoint centrePoint;
     private POIType poiType;
     private List<Person> people;
@@ -69,8 +68,8 @@ public class Response {
       return this;
     }
 
-    public ResponseBuilder withLocation(POI POI) {
-      this.POIs.add(POI);
+    public ResponseBuilder withLocations(List<POI> POI) {
+      this.POIs = POI;
       return this;
     }
 

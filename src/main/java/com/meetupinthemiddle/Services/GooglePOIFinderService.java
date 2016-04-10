@@ -6,7 +6,9 @@ import com.google.maps.model.*;
 import com.meetupinthemiddle.Model.LatLong;
 import com.meetupinthemiddle.Model.POI;
 import com.meetupinthemiddle.Model.POIType;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -24,17 +26,27 @@ public class GooglePOIFinderService implements POIFinderService {
   @Autowired
   private GeoApiContext context;
 
+  @Value("${google.maps.photos.url}")
+  private String photoUrlFormat;
+
+  private static final Map<POIType, PlaceType> POI_PLACE_TYPE_MAPPING = new HashMap<>();
+
+  static {
+    POI_PLACE_TYPE_MAPPING.put(POIType.RESTAURANT, PlaceType.RESTAURANT);
+    POI_PLACE_TYPE_MAPPING.put(POIType.PUB, PlaceType.BAR);
+  }
+
   private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction = place -> {
     try {
       PlaceDetails placeDetails = PlacesApi.placeDetails(context, place.placeId).await();
       return
           aPOI().withName(place.name)
-              .withAddress(place.formattedAddress)
+              .withAddress(placeDetails.formattedAddress)
               .withDistanceFromCentrePoint(0)
               .withGeocode(mapLatLngToMeetModel(place.geometry.location))
               .withPhoneNumber(placeDetails.formattedPhoneNumber)
-              .withImageUrl(place.icon.toString())
-              .withWebsite(placeDetails.website.toString())
+              .withImageUrl(extractPhotoUrl(place))
+              .withWebsite(extractWebsite(placeDetails))
               .build();
     } catch (Exception e) {
       //TODO - proper exception handling
@@ -42,11 +54,20 @@ public class GooglePOIFinderService implements POIFinderService {
     }
   };
 
-  private static final Map<POIType, PlaceType> POI_PLACE_TYPE_MAPPING = new HashMap<>();
+  private String extractWebsite(final PlaceDetails placeDetails) {
+    return placeDetails.website != null ? placeDetails.website.toString() : null;
+  }
 
-  static {
-    POI_PLACE_TYPE_MAPPING.put(POIType.RESTAURANT, PlaceType.RESTAURANT);
-    POI_PLACE_TYPE_MAPPING.put(POIType.PUB, PlaceType.BAR);
+  private String extractPhotoUrl(final PlacesSearchResult place) {
+    if (ArrayUtils.isNotEmpty(place.photos)) {
+      return formatPhotoUrl(place.photos[0]);
+    } else {
+      return place.icon.toString();
+    }
+  }
+
+  private String formatPhotoUrl(final Photo photo) {
+    return String.format(photoUrlFormat, photo.photoReference);
   }
 
   @Override

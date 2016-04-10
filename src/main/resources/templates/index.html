@@ -10,7 +10,7 @@
     <script th:src="@{webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
     <script th:src="@{webjars/mustachejs/2.2.1/mustache.js}"></script>
     <script th:src="@{js/main.js}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap&v=3&libraries=places&region=gb"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap&v=3.24&libraries=places&region=gb"
             async defer></script>
 </head>
 <body>
@@ -20,7 +20,7 @@
     if (d.getElementById(id)) return;
     js = d.createElement(s);
     js.id = id;
-    js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=222203271174707";
+    js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3&appId=222203271174707";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 <header>
