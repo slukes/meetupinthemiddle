@@ -1,6 +1,6 @@
 package com.meetupinthemiddle.model
 
-class CentrePoint {
+class MidPoint {
   LatLong latLong;
   String postCode;
   String locality;

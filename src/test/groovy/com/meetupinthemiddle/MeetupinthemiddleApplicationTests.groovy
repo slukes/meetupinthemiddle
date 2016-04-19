@@ -12,5 +12,4 @@ class MeetupinthemiddleApplicationTests {
   @Test
   void contextLoads() {
   }
-
 }

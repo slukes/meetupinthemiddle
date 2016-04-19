@@ -4,9 +4,8 @@ class POI {
   String name
   String address
   String phoneNumber
-  String emailAddress
   String website
-  LatLong geocode
+  LatLong latLong
   float distanceFromCentrePoint
   String imageUrl
 }

@@ -28,6 +28,21 @@ public class GooglePOIFinderService implements POIFinderService {
     POI_PLACE_TYPE_MAPPING.put(POIType.PUB, PlaceType.BAR)
   }
 
+  @Override
+  public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
+    PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
+        .type(POI_PLACE_TYPE_MAPPING.get(type))
+        .rankby(RankBy.DISTANCE)
+        .await()
+        .results
+
+    Arrays.stream(googleResponse)
+        .limit(numberToFind)
+        .parallel()
+        .map(mapPlaceToPoiFunction)
+        .collect(Collectors.toList())
+  }
+
   private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction =
       {
         place ->
@@ -37,7 +52,7 @@ public class GooglePOIFinderService implements POIFinderService {
             name = place.name
             address = placeDetails.formattedAddress
             distanceFromCentrePoint = 0
-            geocode = mapLatLngToMeetModel(place.geometry.location)
+            latLong = mapLatLngToMeetModel(place.geometry.location)
             phoneNumber = placeDetails.formattedPhoneNumber
             imageUrl = extractPhotoUrl(place)
             website = extractWebsite(placeDetails)
@@ -61,20 +76,6 @@ public class GooglePOIFinderService implements POIFinderService {
     return String.format(photoUrlFormat, photo.photoReference)
   }
 
-  @Override
-  public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
-    PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
-        .type(POI_PLACE_TYPE_MAPPING.get(type))
-        .rankby(RankBy.DISTANCE)
-        .await()
-        .results
-
-    Arrays.stream(googleResponse)
-        .limit(numberToFind)
-        .parallel()
-        .map(mapPlaceToPoiFunction)
-        .collect(Collectors.toList())
-  }
 
   private LatLng mapLatLongToGoogleModel(final LatLong location) {
     new LatLng(location.getLat(), location.getLng())

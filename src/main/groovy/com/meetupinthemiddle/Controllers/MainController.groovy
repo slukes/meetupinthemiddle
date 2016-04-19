@@ -1,10 +1,7 @@
 package com.meetupinthemiddle.controllers
-import com.meetupinthemiddle.model.POIType
-import com.meetupinthemiddle.model.Person
-import com.meetupinthemiddle.model.Response
+import com.meetupinthemiddle.model.*
 import com.meetupinthemiddle.services.POIFinderService
-import com.meetupinthemiddle.model.CentrePoint
-import com.meetupinthemiddle.model.LatLong
+import com.meetupinthemiddle.services.PointFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,9 +10,13 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 
 @Controller
+@RequestMapping("/test")
 class MainController {
   @Autowired
   private TemplateEngine templateEngine
+
+  @Autowired
+  private PointFinder trainStationFinder
 
   @Autowired
   private POIFinderService poiFinderService
@@ -32,7 +33,7 @@ class MainController {
         new LatLong(lat: 51.31627, lng: -0.571981), 5, POIType.RESTAURANT)
 
     def response = new Response().with {
-      centrePoint = new CentrePoint().with {
+      centrePoint = new MidPoint().with {
         latLong = new LatLong().with {
           lat = 51.31627
           lng = -0.571981
