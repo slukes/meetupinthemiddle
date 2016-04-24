@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when
 
 @ContextConfiguration(classes = TrainStationFinderTestConfig)
 @RunWith(SpringRunner)
-public class TrainStationFinderTest {
+class TrainStationFinderTest {
 
   @Autowired
   PointFinder trainStationFinder
