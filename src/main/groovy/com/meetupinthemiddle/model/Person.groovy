@@ -5,5 +5,6 @@ class Person {
   float distance
   int travelTime
   String from
+  LatLong latLong
   TransportMode transportMode
 }

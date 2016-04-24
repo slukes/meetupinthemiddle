@@ -1,6 +1,6 @@
 package com.meetupinthemiddle.controllers
 import com.meetupinthemiddle.model.*
-import com.meetupinthemiddle.services.POIFinderService
+import com.meetupinthemiddle.services.POIFinder
 import com.meetupinthemiddle.services.PointFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -19,7 +19,7 @@ class MainController {
   private PointFinder trainStationFinder
 
   @Autowired
-  private POIFinderService poiFinderService
+  private POIFinder poiFinderService
 
   @RequestMapping("/")
   String index() {

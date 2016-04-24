@@ -1,29 +1,23 @@
 package com.meetupinthemiddle.services
 
+import com.google.maps.GeoApiContext
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.web.client.RestTemplate
-
-import static org.mockito.Mockito.mock
 
 @Configuration
 @PropertySource("classpath:application.properties")
-class TrainStationFinderTestConfig {
+class GoogleMapsJourneyTimesFinderTestConfig {
   @Bean
-  PointFinder trainStationFinder() {
-    new TrainStationFinder()
+  JourneyTimesFinder journeyTimesFinder(){
+    return new GoogleMapsJourneyTimesFinder()
   }
 
   @Bean
-  RestTemplate restTemplate() {
-    mock(RestTemplate)
-  }
-
-  @Bean
-  Geocoder geocoder() {
-    mock(Geocoder)
+  GeoApiContext geoApiContext(@Value('${google.maps.api.key}') String apiKey) {
+    return new GeoApiContext().setApiKey(apiKey)
   }
 
   @Bean

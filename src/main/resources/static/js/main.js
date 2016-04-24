@@ -1,21 +1,41 @@
 $(document).ready(function () {
+    //Uses jQuery tooltip library to load tooltip
     $('[data-toggle="tooltip"]').tooltip();
 });
 
 var map;
-function initMap() {
+/**
+ * This function is a call back from the GoogleMaps JS loading
+ * The majority of the apps own JS is within this call back
+ * as it makes reference to the map.
+ */
+function init() {
+    //Keep track of how many people are currently in the table
+    //Required so the indicies (which will be needed for binding the form to a back end bean)
+    //Can we easily shuffled up when a persond is deleted from the table.
+    var personCount = 0;
+    var newName = $("#newName"),
+        newFrom = $("#newFrom");
+
+    //Used to control whether the add person button should be enabled
+    var haveNewValue = false;
+
+    //Load the map
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 54.152141, lng: -3.032227},
         zoom: 7,
         mapTypeControl: false
     });
 
-    var personCount = 0;
-    var newName = $("#newName"),
-        newFrom = $("#newFrom");
+    //Configure automcomplete for locations
+    //TODO configure this further
+    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('newFrom'),
+        {
+            componentRestrictions: {country: 'gb'}
+        });
 
-    var haveNewValue = false;
-
+    //If something is entered in both the name and from field
+    //the add button should be ungreyed out
     $(newName).add(newFrom).on('input', function (e) {
         haveNewValue = $.trim(newName.val()).length > 0
             && $.trim(newFrom.val()).length > 0;
@@ -25,17 +45,30 @@ function initMap() {
         }
     });
 
+    //When the add person button is clicked
+    //Assuming that data is in the name anf from fields then:
+    // Add a row to the table
+    // Add a pin to the map
+    // Reset the form fields
+    // If we now have 2 or more peopl enable the submit button
     $('#add-person').click(function (e) {
-        if (!haveNewValue) return;
+        if (!haveNewValue) {
+            return;
+        }
+
         var name = $('#newName').val();
         var location = $('#newFrom').val();
         var mode = $('#newMode').val();
+
         addRowToPeopleTable(name, location, mode);
         addPinToMap(location, name);
+
         $('#newPersonForm')[0].reset();
         haveNewValue = false;
         $('#add-person').addClass('disabled');
+
         personCount++;
+
         if (personCount >= 2) {
             $('#submitButton').prop('disabled', false);
         }
@@ -43,9 +76,15 @@ function initMap() {
 
     var bounds = new google.maps.LatLngBounds();
     var geocoder = new google.maps.Geocoder();
+    //Keep track of the marksers and info windows so can iterate over them
     var markers = [];
     var infowindows = [];
 
+    /**
+     * Adds a new pin to the map and centres the map.
+     * @param location the lat and long of the point to add
+     * @param name the name of the pin to add.  The first letter will be shown on the pin
+     */
     function addPinToMap(location, name) {
         geocoder.geocode({'address': location}, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
@@ -62,6 +101,12 @@ function initMap() {
         });
     }
 
+    /**
+     * Adds a row to the table
+     * @param name the name of the person we are adding
+     * @param from the location of the person we are adding
+     * @param mode the mode of transport the person is using
+     */
     function addRowToPeopleTable(name, from, mode) {
         var person = {
             name: name,
@@ -70,20 +115,28 @@ function initMap() {
             personCount: personCount
         };
 
+        //TODO it would be more efficient to not make this AJAX request everytime
+        //Is it possible to load it into the DOM as a hidden element at the start?
         $.get('mustache/personTableRow.html', function (template) {
             $('#peopleTable').append(Mustache.to_html(template, person));
         });
     }
 
+    //Removing a person
     $('body').on('click', '.removePerson', function (e) {
         var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
+        //Removes pin from map and re-centres
         markers[idToRemove].setMap(null);
         bounds = new google.maps.LatLngBounds();
         markers.splice(idToRemove, 1);
         markers.forEach(function (marker) {
-            bounds.extend(marker.getPosition());
+            if (marker.getMap() != null) {
+                bounds.extend(marker.getPosition());
+            }
         });
         centreMap();
+
+        //Shuffle up the indices in the table
         $('#peopleTable').find('tr').each(function () {
             if (this.rowIndex > idToRemove) {
                 var newIndex = this.rowIndex - 1;
@@ -97,11 +150,16 @@ function initMap() {
         });
         $(this).closest('tr').remove();
         personCount--;
+
+        //Disable the submit button if required
         if (personCount < 2) {
             $('#submitButton').prop('disabled', true);
         }
     });
 
+    /**
+     * Centres the pins on the points currently displayed
+     */
     function centreMap() {
         if (markers.length == 0) {
             map.setCenter(new google.maps.LatLng(54.152141, -3.032227));
@@ -114,11 +172,9 @@ function initMap() {
         }
     }
 
-    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('newFrom'),
-        {
-            componentRestrictions: {country: 'gb'}
-        });
-
+    //Loads the results when the submit button is clicked.
+    //Changes the content of the overlaid section
+    //Adds a point to the map and an info window for each of the businesses
     $('#submitButton').click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -135,6 +191,8 @@ function initMap() {
                         clickable: true,
                         map: map
                     });
+                    //This is required since initially I was finding that the call back below was reading the value of i
+                    //For the iteration the loop was on at the time of the callback rather than the correct value
                     const index = i;
                     $.get('mustache/infowindow.html', function (template) {
                         var infowindow = new google.maps.InfoWindow({
@@ -157,6 +215,7 @@ function initMap() {
                         });
 
                     });
+
                     markers.push(marker);
                     bounds.extend(marker.getPosition());
                     centreMap();

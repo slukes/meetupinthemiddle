@@ -28,6 +28,9 @@ public class TrainStationFinderTest {
   @Autowired
   RestTemplate restTemplate
 
+  @Autowired
+  Geocoder geocoder
+
   @Value('${train.station.api.url.format}')
   String trainStationApiBaseUrl
 
@@ -51,6 +54,7 @@ public class TrainStationFinderTest {
   void latLongObjectContainsCoords() throws Exception {
     //Given
     when(restTemplate.getForObject(anyString(), eq(TrainStationResponse))).thenReturn(aTrainStationResponse())
+    when(geocoder.geocode(anyString())).thenReturn(aLatLong())
     //When
     def resp = trainStationFinder.find(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
     //Then
@@ -58,7 +62,11 @@ public class TrainStationFinderTest {
     assert resp[0].lng == 2.2f
   }
 
-  TrainStationResponse aTrainStationResponse() {
+  private aLatLong() {
+    new LatLong(lat: 1.2f, lng: 2.2f)
+  }
+
+  private aTrainStationResponse() {
     new TrainStationResponse().with {
       success = true
       result =
@@ -70,6 +78,4 @@ public class TrainStationFinderTest {
       it
     }
   }
-
-
 }

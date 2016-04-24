@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.services
+
 import com.meetupinthemiddle.model.LatLong
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -15,21 +16,24 @@ class TrainStationFinder implements PointFinder {
   @Autowired
   private RestTemplate restTemplate
 
+  @Autowired
+  private Geocoder geocoder
+
   @Override
   LatLong[] find(final LatLong minLatLong, final LatLong maxLatLong) {
     def response = restTemplate.getForObject(String.format(trainStationApiBaseUrl, minLatLong.lat, minLatLong.lng, maxLatLong.lat, maxLatLong.lng), TrainStationResponse)
-    response.toLatLongs()
+    toLatLongs(response)
+  }
+
+  LatLong[] toLatLongs(response) {
+    response.result.toList().stream().parallel()
+        .map({ geocoder.geocode(it.stationname) })
+        .collect(Collectors.toList())
   }
 
   static class TrainStationResponse {
     Boolean success
-    TrainStation [] result
-
-    LatLong[] toLatLongs(){
-      result.toList().stream()
-          .map({new LatLong(lat: it.latlong.coordinates[0], lng: it.latlong.coordinates[1])})
-          .collect(Collectors.toList())
-    }
+    TrainStation[] result
 
     static class TrainStation {
       String stationname
@@ -37,7 +41,7 @@ class TrainStationFinder implements PointFinder {
     }
 
     static class TrainStationLatLong {
-      float [] coordinates
+      float[] coordinates
     }
   }
 

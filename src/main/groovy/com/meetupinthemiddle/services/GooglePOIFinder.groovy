@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service
 import java.util.function.Function
 import java.util.stream.Collectors
 
+import static java.util.Arrays.stream
+
 @Service
-public class GooglePOIFinderService implements POIFinderService {
+public class GooglePOIFinder implements POIFinder {
   @Autowired
   private GeoApiContext context
 
@@ -36,7 +38,7 @@ public class GooglePOIFinderService implements POIFinderService {
         .await()
         .results
 
-    Arrays.stream(googleResponse)
+    stream(googleResponse)
         .limit(numberToFind)
         .parallel()
         .map(mapPlaceToPoiFunction)
