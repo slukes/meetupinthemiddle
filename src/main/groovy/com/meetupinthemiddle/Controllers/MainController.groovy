@@ -1,69 +1,37 @@
 package com.meetupinthemiddle.controllers
-import com.meetupinthemiddle.model.*
-import com.meetupinthemiddle.services.POIFinder
-import com.meetupinthemiddle.services.PointFinder
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.servlet.ViewResolver
 import org.thymeleaf.TemplateEngine
-import org.thymeleaf.context.Context
 
 @Controller
 class MainController {
   @Autowired
-  private TemplateEngine templateEngine
+  TemplateEngine templateEngine
 
   @Autowired
-  private PointFinder trainStationFinder
-
-  @Autowired
-  private POIFinder poiFinderService
+  ViewResolver viewResolver
 
   @RequestMapping("/")
   String index() {
     "index"
   }
 
-  @RequestMapping("/search")
-  @ResponseBody
-  Response search() {
-    def pois = poiFinderService.findPOIs(
-        new LatLong(lat: 51.31627, lng: -0.571981), 5, POIType.RESTAURANT)
+  @RequestMapping("/contact")
+  String contact() {
+    "contact"
+  }
 
-    def response = new Response().with {
-      centrePoint = new MidPoint().with {
-        latLong = new LatLong().with {
-          lat = 51.31627
-          lng = -0.571981
-          it
-        }
-        postCode = "GU21 6NE"
-        locality = "Woking"
-        it
-      }
+  @RequestMapping("/terms")
+  String terms() {
+    "terms"
+  }
 
-      POIs = pois
-      poiType = POIType.RESTAURANT
-      people = [new Person().with{
-        name = "Sam"
-        distance = 4.5f
-        travelTime = 45
-        it
-      }, new Person().with {
-        name = "George"
-        distance = 4.5f
-        travelTime = 46
-        it
-      }]
-      it
-    }
-
-    def ctx = new Context()
-    ctx.setVariable("response", response)
-    def html = templateEngine.process("result", ctx)
-
-    response.setHtml(html)
-    response
+  //If we don't have what is being asked for, show the home page
+  @RequestMapping("/*")
+  String other() {
+    "redirect:/"
   }
 }

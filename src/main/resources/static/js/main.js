@@ -10,10 +10,9 @@ var map;
  * as it makes reference to the map.
  */
 function initMap() {
-    //Keep track of how many people are currently in the table
-    //Required so the indicies (which will be needed for binding the form to a back end bean)
-    //Can we easily shuffled up when a persond is deleted from the table.
-    var personCount = 0;
+    //Keep track of an id so we can easily delete people!
+    var personId = 0;
+    var people = {};
     var newName = $("#newName"),
         newFrom = $("#newFrom");
 
@@ -36,7 +35,7 @@ function initMap() {
 
     //If something is entered in both the name and from field
     //the add button should be ungreyed out
-    $(newName).add(newFrom).on('change ready', function (e) {
+    $(newName).add(newFrom).on('change keyup', function (e) {
         haveNewValue = $.trim(newName.val()).length > 0
             && $.trim(newFrom.val()).length > 0;
 
@@ -60,16 +59,16 @@ function initMap() {
         var location = $('#newFrom').val();
         var mode = $('#newMode').val();
 
-        addRowToPeopleTable(name, location, mode);
+        addPerson(name, location, mode);
         addPinToMap(location, name);
 
         $('#newPersonForm')[0].reset();
         haveNewValue = false;
         $('#add-person').addClass('disabled');
 
-        personCount++;
+        personId++;
 
-        if (personCount >= 2) {
+        if (personId >= 2) {
             $('#submitButton').prop('disabled', false);
         }
     });
@@ -107,13 +106,15 @@ function initMap() {
      * @param from the location of the person we are adding
      * @param mode the mode of transport the person is using
      */
-    function addRowToPeopleTable(name, from, mode) {
+    function addPerson(name, from, mode) {
         var person = {
             name: name,
             from: from,
-            mode: mode,
-            personCount: personCount
+            transportMode: mode,
+            personId: personId
         };
+
+        people[personId] = person;
 
         //TODO it would be more efficient to not make this AJAX request everytime
         //Is it possible to load it into the DOM as a hidden element at the start?
@@ -136,23 +137,14 @@ function initMap() {
         });
         centreMap();
 
-        //Shuffle up the indices in the table
-        $('#peopleTable').find('tr').each(function () {
-            if (this.rowIndex > idToRemove) {
-                var newIndex = this.rowIndex - 1;
-                $(this).find('.name').attr('name', 'name[' + newIndex + ']');
-                $(this).find('.from').attr('name', 'from[' + newIndex + ']');
-                $(this).find('.mode').attr('name', 'mode[' + newIndex + ']');
-                $(this).find('.removePerson').attr('id', 'remove[' + newIndex + ']');
-
-                markers[newIndex] = markers[this.rowIndex];
-            }
-        });
+        //Get rid of the row in the table
         $(this).closest('tr').remove();
-        personCount--;
+
+        //And from the JSON we will send
+        delete people[idToRemove];
 
         //Disable the submit button if required
-        if (personCount < 2) {
+        if ($('#peopleTable tr').length < 2) {
             $('#submitButton').prop('disabled', true);
         }
     });
@@ -172,15 +164,27 @@ function initMap() {
         }
     }
 
+    $('#submitButton').click(function (e) {
+        e.preventDefault();
+        ajaxSearch();
+    });
+
     //Loads the results when the submit button is clicked.
     //Changes the content of the overlaid section
     //Adds a point to the map and an info window for each of the businesses
-    $('#submitButton').click(function (e) {
-        e.preventDefault();
+    function ajaxSearch() {
+        data = JSON.stringify({
+            "people": Object.keys(people).map(function (key) {
+                return people[key];
+            }),
+            "poiType": $("#poi").val()
+        });
+
         $.ajax({
             url: '/search',
             contentType: 'application/json',
             method: 'post',
+            data: data,
             success: function (data) {
                 $('#overlayContent').html(data.html);
                 for (var i = 0; i < data.pois.length; i++) {
@@ -222,6 +226,7 @@ function initMap() {
                 }
             }
         })
-    });
+    }
+
     return false;
 }

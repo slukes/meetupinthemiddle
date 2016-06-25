@@ -1,7 +1,17 @@
 package com.meetupinthemiddle.model
 
-/**
- * Created by Sam Lukes on 25/06/2016.
- */
 class ErrorResponse {
+  enum ErrorReason {
+    NOT_ENOUGH_PEOPLE,
+    MISSING_NAME,
+    MISSING_FROM,
+    MISSING_OR_INVALID_POI_TYPE,
+    MISSING_OR_INVALID_TRANSPORT_MODE,
+    UNKNOWN
+  }
+  List<ErrorReason> errorReasons = []
+
+  void addReason(ErrorReason reason){
+    errorReasons.add(reason)
+  }
 }

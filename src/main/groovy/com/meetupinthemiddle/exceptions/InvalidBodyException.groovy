@@ -1,7 +1,9 @@
 package com.meetupinthemiddle.exceptions
 
-/**
- * Created by Sam Lukes on 25/06/2016.
- */
-class InvalidBodyException {
+import groovy.transform.TupleConstructor
+import org.springframework.validation.FieldError
+
+@TupleConstructor
+class InvalidBodyException extends RuntimeException{
+  List<FieldError> fieldError;
 }
