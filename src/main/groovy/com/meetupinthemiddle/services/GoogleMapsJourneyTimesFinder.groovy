@@ -1,5 +1,4 @@
 package com.meetupinthemiddle.services
-
 import com.google.maps.DistanceMatrixApi
 import com.google.maps.model.DistanceMatrix
 import com.google.maps.model.LatLng
@@ -8,7 +7,6 @@ import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.Person
 import com.meetupinthemiddle.model.TransportMode
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -16,8 +14,6 @@ import org.springframework.web.client.RestTemplate
 class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
   @Autowired
   private RestTemplate restTemplate
-
-  @Value('${}')
 
   private static final def TRANSPORT_MODE_TO_GOOGLE_MODEL =
       [(TransportMode.DRIVING): TravelMode.DRIVING, (TransportMode.PUBLIC): TravelMode.TRANSIT]

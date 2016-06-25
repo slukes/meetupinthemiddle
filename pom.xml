@@ -101,19 +101,20 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-mockito-release-full</artifactId>
       <version>1.6.4</version>
+      <classifier>full</classifier>
     </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-classloading-xstream</artifactId>
-      <version>1.6.4</version>
-      <scope>test</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.powermock</groupId>-->
+      <!--<artifactId>powermock-classloading-xstream</artifactId>-->
+      <!--<version>1.6.4</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
 
 
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4-rule</artifactId>
-      <version>1.6.4</version>
+      <version>1.6.5</version>
       <scope>test</scope>
     </dependency>
 
@@ -164,6 +165,16 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>mvnrepository</id>
+      <url>http://repo1.maven.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   <pluginRepositories>
