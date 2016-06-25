@@ -25,7 +25,7 @@
         if (d.getElementById(id)) return;
         js = d.createElement(s);
         js.id = id;
-        js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3&appId=222203271174707";
+        js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.6&appId=222203271174707";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 </script>
@@ -54,7 +54,7 @@
           title="Detailed instructions regarding how the page should be used will be included here."></span>
         </section>
 
-        <form action="#" method="post" role="form" id="newPersonForm">
+        <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
             <input class="form-control" type="text" id="newName" placeholder="name"/>
             <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>
             <select class="form-control" id="newMode">

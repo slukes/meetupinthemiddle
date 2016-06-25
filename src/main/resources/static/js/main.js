@@ -9,7 +9,7 @@ var map;
  * The majority of the apps own JS is within this call back
  * as it makes reference to the map.
  */
-function init() {
+function initMap() {
     //Keep track of how many people are currently in the table
     //Required so the indicies (which will be needed for binding the form to a back end bean)
     //Can we easily shuffled up when a persond is deleted from the table.
@@ -36,7 +36,7 @@ function init() {
 
     //If something is entered in both the name and from field
     //the add button should be ungreyed out
-    $(newName).add(newFrom).on('input', function (e) {
+    $(newName).add(newFrom).on('change ready', function (e) {
         haveNewValue = $.trim(newName.val()).length > 0
             && $.trim(newFrom.val()).length > 0;
 
@@ -184,7 +184,7 @@ function init() {
             success: function (data) {
                 $('#overlayContent').html(data.html);
                 for (var i = 0; i < data.pois.length; i++) {
-                    var latLng = data.pois[i].geocode;
+                    var latLng = data.pois[i].latLong;
                     const marker = new google.maps.Marker({
                         position: new google.maps.LatLng(latLng.lat, latLng.lng),
                         label: "" + (i + 1),

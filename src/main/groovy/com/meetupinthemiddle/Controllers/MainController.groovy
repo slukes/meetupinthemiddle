@@ -10,7 +10,6 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 
 @Controller
-@RequestMapping("/test")
 class MainController {
   @Autowired
   private TemplateEngine templateEngine
