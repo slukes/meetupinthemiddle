@@ -4,6 +4,7 @@ $(document).ready(function () {
 });
 
 var map;
+
 /**
  * This function is a call back from the GoogleMaps JS loading
  * The majority of the apps own JS is within this call back
@@ -13,8 +14,14 @@ function initMap() {
     //Keep track of an id so we can easily delete people!
     var personId = 0;
     var people = {};
+    var markers = [];
     var newName = $("#newName"),
         newFrom = $("#newFrom");
+
+    var bounds = new google.maps.LatLngBounds();
+    var geocoder = new google.maps.Geocoder();
+    //Keep track of the markers and info windows so can iterate over them
+    var infowindows = [];
 
     //Used to control whether the add person button should be enabled
     var haveNewValue = false;
@@ -59,45 +66,38 @@ function initMap() {
         var location = $('#newFrom').val();
         var mode = $('#newMode').val();
 
-        addPerson(name, location, mode);
-        addPinToMap(location, name);
-
-        $('#newPersonForm')[0].reset();
-        haveNewValue = false;
-        $('#add-person').addClass('disabled');
-
-        personId++;
-
-        if (personId >= 2) {
-            $('#submitButton').prop('disabled', false);
-        }
-    });
-
-    var bounds = new google.maps.LatLngBounds();
-    var geocoder = new google.maps.Geocoder();
-    //Keep track of the marksers and info windows so can iterate over them
-    var markers = [];
-    var infowindows = [];
-
-    /**
-     * Adds a new pin to the map and centres the map.
-     * @param location the lat and long of the point to add
-     * @param name the name of the pin to add.  The first letter will be shown on the pin
-     */
-    function addPinToMap(location, name) {
         geocoder.geocode({'address': location}, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
-                var marker = new google.maps.Marker({
-                    position: results[0].geometry.location,
-                    label: name,
-                    clickable: false,
-                    map: map
-                });
-                markers.push(marker);
-                bounds.extend(marker.getPosition());
-                centreMap();
+                latLng = results[0].geometry.location;
+                addPinToMap(latLng, name);
+                addPerson(name, location, latLng, mode);
+
+                $('#newPersonForm')[0].reset();
+                haveNewValue = false;
+                $('#add-person').addClass('disabled');
+                personId++;
+
+                if (personId >= 2) {
+                    $('#submitButton').prop('disabled', false);
+                }
+            } else {
+                //TODO
             }
         });
+
+    });
+
+
+    function addPinToMap(location, name) {
+        var marker = new google.maps.Marker({
+            position: location,
+            label: name,
+            clickable: false,
+            map: map
+        });
+        markers.push(marker);
+        bounds.extend(marker.getPosition());
+        centreMap();
     }
 
     /**
@@ -106,10 +106,11 @@ function initMap() {
      * @param from the location of the person we are adding
      * @param mode the mode of transport the person is using
      */
-    function addPerson(name, from, mode) {
+    function addPerson(name, from, latLng, mode) {
         var person = {
             name: name,
             from: from,
+            latLong: latLng,
             transportMode: mode,
             personId: personId
         };

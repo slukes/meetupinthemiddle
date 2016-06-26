@@ -5,13 +5,14 @@ class ErrorResponse {
     NOT_ENOUGH_PEOPLE,
     MISSING_NAME,
     MISSING_FROM,
+    MISSING_LAT_LONG,
     MISSING_OR_INVALID_POI_TYPE,
     MISSING_OR_INVALID_TRANSPORT_MODE,
     UNKNOWN
   }
   List<ErrorReason> errorReasons = []
 
-  void addReason(ErrorReason reason){
+  void addReason(ErrorReason reason) {
     errorReasons.add(reason)
   }
 }

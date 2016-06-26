@@ -5,5 +5,5 @@ import com.meetupinthemiddle.model.POI
 import com.meetupinthemiddle.model.POIType
 
 interface POIFinder {
-   POI[] findPOIs(LatLong location, int numberToFind, POIType type)
+   List<POI> findPOIs(LatLong location, int numberToFind, POIType type)
 }

@@ -2,16 +2,15 @@ package com.meetupinthemiddle.controllers
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
-import com.meetupinthemiddle.model.*
-import com.meetupinthemiddle.services.POIFinder
-import com.meetupinthemiddle.services.PointFinder
+import com.meetupinthemiddle.model.ErrorResponse
+import com.meetupinthemiddle.model.Request
+import com.meetupinthemiddle.model.Response
+import com.meetupinthemiddle.services.MeetUpFacade
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.stereotype.Controller
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
-import org.thymeleaf.TemplateEngine
-import org.thymeleaf.context.Context
 
 import javax.validation.Valid
 
@@ -22,13 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST
 @Controller
 class SearchController {
   @Autowired
-  private TemplateEngine templateEngine
-
-  @Autowired
-  private PointFinder trainStationFinder
-
-  @Autowired
-  private POIFinder poiFinderService
+  private MeetUpFacade meetUpFacade
 
   @RequestMapping(path = "/search", method = POST, produces = "application/json")
   @ResponseBody
@@ -36,43 +29,8 @@ class SearchController {
     if (bindingResult.hasErrors()) {
       throw new InvalidBodyException(bindingResult.fieldErrors)
     }
-    def pois = poiFinderService.findPOIs(
-        new LatLong(lat: 51.31627, lng: -0.571981), 5, POIType.RESTAURANT)
 
-    def response = new Response().with {
-      centrePoint = new MidPoint().with {
-        latLong = new LatLong().with {
-          lat = 51.31627
-          lng = -0.571981
-          it
-        }
-        postCode = "GU21 6NE"
-        locality = "Woking"
-        it
-      }
-
-      POIs = pois
-      poiType = POIType.RESTAURANT
-      people = [new Person().with {
-        name = "Sam"
-        distance = 4.5f
-        travelTime = 45
-        it
-      }, new Person().with {
-        name = "George"
-        distance = 4.5f
-        travelTime = 46
-        it
-      }]
-      it
-    }
-
-    def ctx = new Context()
-    ctx.setVariable("response", response)
-    def html = templateEngine.process("result", ctx)
-
-    response.setHtml(html)
-    response
+    meetUpFacade.doSearch(request)
   }
 
   @ExceptionHandler(InvalidBodyException)
@@ -81,19 +39,22 @@ class SearchController {
   ErrorResponse handleBodyError(InvalidBodyException exception) {
     def response = new ErrorResponse()
 
-    exception.fieldError.forEach({ err ->
-      def field = err.field
-      if (field != null) {
-        if (field.endsWith("poiType")) {
-          response.addReason(MISSING_OR_INVALID_POI_TYPE)
-        } else if (field.endsWith("name")) {
-          response.addReason(MISSING_NAME)
-        } else if (field.endsWith("from")) {
-          response.addReason(MISSING_FROM)
-        } else if (field.endsWith("transportMode")) {
-          response.addReason(MISSING_OR_INVALID_TRANSPORT_MODE)
+    exception.fieldError.forEach({
+      err ->
+        def field = err.field
+        if (field != null) {
+          if (field.endsWith("poiType")) {
+            response.addReason(MISSING_OR_INVALID_POI_TYPE)
+          } else if (field.endsWith("name")) {
+            response.addReason(MISSING_NAME)
+          } else if (field.endsWith("from")) {
+            response.addReason(MISSING_FROM)
+          } else if (field.endsWith("latLong")) {
+            response.addReason(MISSING_LAT_LONG)
+          } else if (field.endsWith("transportMode")) {
+            response.addReason(MISSING_OR_INVALID_TRANSPORT_MODE)
+          }
         }
-      }
     })
 
     if (response.errorReasons.size() < 1) {

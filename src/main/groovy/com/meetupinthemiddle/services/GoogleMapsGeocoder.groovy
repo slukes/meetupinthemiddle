@@ -17,7 +17,7 @@ class GoogleMapsGeocoder implements Geocoder{
   LatLong geocode(final String location) {
     def resp = GeocodingApi.geocode(context, location).await()
     if(resp.length > 0) {
-      new LatLong(lat: resp[0].geometry.location.lat, lng: resp[0].geometry.location.lat)
+      new LatLong(lat: resp[0].geometry.location.lat, lng: resp[0].geometry.location.lng)
     } else {
       return null
     }

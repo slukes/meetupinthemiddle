@@ -31,7 +31,7 @@ public class GooglePOIFinder implements POIFinder {
   }
 
   @Override
-  public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
+  public List<POI> findPOIs(LatLong location, int numberToFind, POIType type) {
     PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .type(POI_PLACE_TYPE_MAPPING.get(type))
         .rankby(RankBy.DISTANCE)
