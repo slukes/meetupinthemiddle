@@ -1,0 +1,35 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head-elements">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>MeetUpInTheMiddle</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+    <script th:src="@{/webjars/jquery/2.2.2/jquery.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+    <script th:src="@{/webjars/mustachejs/2.2.1/mustache.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap&v=3.24&libraries=places&region=gb"
+            async defer></script>
+</head>
+
+<header th:fragment="header">
+    <div class="row">
+        <!--TODO change image for actual logo-->
+        <img id="logo" class="col-md-1" th:src="@{/img/imageSquare.jpg}" alt="Meet Up In The Middle Logo"/>
+
+        <div id="titles" class="col-md-10">
+            <h1>MeetUpInTheMiddle</h1>
+            <!--TODO put actual slogan if there will be one-->
+            <em>Some text will go here ...</em>
+        </div>
+    </div>
+    <div class="span12">
+        <hr/>
+    </div>
+</header>
+
+<footer th:fragment="footer">
+    <a href="/contact">Contact</a> | <a href="/terms">Terms and Conditions</a>
+</footer>
+</html>
