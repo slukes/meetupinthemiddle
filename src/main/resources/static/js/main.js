@@ -5,6 +5,15 @@ $(document).ready(function () {
 
 var map;
 
+function Person(name, from, latLong, transportMode, prettyTransportMode, personId){
+    this.name = name;
+    this.from = from;
+    this.latLong = latLong;
+    this.transportMode = transportMode;
+    this.prettyTransportMode = prettyTransportMode
+    this.personId = personId;
+}
+
 /**
  * This function is a call back from the GoogleMaps JS loading
  * The majority of the apps own JS is within this call back
@@ -65,12 +74,13 @@ function initMap() {
         var name = $('#newName').val();
         var location = $('#newFrom').val();
         var mode = $('#newMode').val();
+        var prettyMode = $('#newMode option[value=' + mode + ']').text()
 
         geocoder.geocode({'address': location}, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 latLng = results[0].geometry.location;
                 addPinToMap(latLng, name);
-                addPerson(name, location, latLng, mode);
+                addPerson(name, location, latLng, mode, prettyMode);
 
                 $('#newPersonForm')[0].reset();
                 haveNewValue = false;
@@ -100,21 +110,8 @@ function initMap() {
         centreMap();
     }
 
-    /**
-     * Adds a row to the table
-     * @param name the name of the person we are adding
-     * @param from the location of the person we are adding
-     * @param mode the mode of transport the person is using
-     */
-    function addPerson(name, from, latLng, mode) {
-        var person = {
-            name: name,
-            from: from,
-            latLong: latLng,
-            transportMode: mode,
-            personId: personId
-        };
-
+    function addPerson(name, from, latLng, mode, prettyTransportMode) {
+        var person = new Person(name, from, latLng, mode, prettyTransportMode, personId);
         people[personId] = person;
 
         //TODO it would be more efficient to not make this AJAX request everytime
