@@ -8,6 +8,7 @@ import com.google.maps.model.LatLng
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.TownAndPostcode
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,17 +17,20 @@ class GoogleMapsGeocoder implements Geocoder {
   private GeoApiContext context
 
   @Override
-//  @Cacheable("geocodes")
+  @Cacheable("geocodes")
   LatLong geocode(final String location) {
     def resp = GeocodingApi.geocode(context, location).await()
     if (resp.length > 0) {
-      new LatLong(lat: resp[0].geometry.location.lat, lng: resp[0].geometry.location.lng)
+      def result = Arrays.<GeocodingResult>stream(resp)
+          .filter({it.addressComponents.find({it.types.contains(AddressComponentType.COUNTRY)}).shortName == "GB"}).findFirst().get()
+      new LatLong(lat: result.geometry.location.lat, lng: result.geometry.location.lng)
     } else {
       return null
     }
   }
 
   @Override
+  @Cacheable("reverse-geocodes")
   TownAndPostcode reverseGeocode(LatLong latLong) {
     def resp = GeocodingApi.reverseGeocode(context, new LatLng(latLong.lat, latLong.lng)).await()
     new TownAndPostcode(findTown(resp), findPostCode(resp))

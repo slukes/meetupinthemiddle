@@ -1,11 +1,11 @@
 package com.meetupinthemiddle.controllers
-
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
 import com.meetupinthemiddle.model.ErrorResponse
 import com.meetupinthemiddle.model.Request
 import com.meetupinthemiddle.model.Response
 import com.meetupinthemiddle.services.MeetUpFacade
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -24,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST
 
 @Controller
 class SearchController {
-  private static final Logger = LoggerFactory.getLogger(SearchController)
+  private static final Logger LOGGER = LoggerFactory.getLogger(SearchController)
   @Autowired
   private MeetUpFacade meetUpFacade
 
@@ -57,6 +57,8 @@ class SearchController {
           def field = err.field
           if (field.endsWith("poiType")) {
             it.addReason(MISSING_OR_INVALID_POI_TYPE)
+          } else if (field.endsWith("people")) {
+            it.addReason(NOT_ENOUGH_PEOPLE)
           } else if (field.endsWith("name")) {
             it.addReason(MISSING_NAME)
           } else if (field.endsWith("from")) {
@@ -104,6 +106,7 @@ class SearchController {
   @ResponseBody
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   ErrorResponse handleUnknownError(Exception e) {
+    LOGGER.error(e)
     new ErrorResponse().with {
       addReason(UNKNOWN)
       it

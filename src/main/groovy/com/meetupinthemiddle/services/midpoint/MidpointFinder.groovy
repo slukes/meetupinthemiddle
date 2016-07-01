@@ -4,5 +4,5 @@ import com.meetupinthemiddle.model.CentrePoint
 import com.meetupinthemiddle.model.Person
 
 interface MidpointFinder {
-  CentrePoint findMidpoint(List<Person> people);
+  Tuple2<CentrePoint, Map<Person, Long>> findMidpoint(List<Person> people);
 }

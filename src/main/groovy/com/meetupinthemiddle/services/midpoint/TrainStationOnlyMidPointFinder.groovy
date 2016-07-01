@@ -21,22 +21,27 @@ class TrainStationOnlyMidPointFinder implements MidpointFinder {
   Geocoder geocoder
 
   @Override
-  CentrePoint findMidpoint(final List<Person> people) {
+  Tuple2<CentrePoint, Map<Person, Long>> findMidpoint(final List<Person> people) {
     def latlongs = getMinAndMaxLatLng(people)
     def stations = trainStationFinder.doFind(latlongs.first, latlongs.second)
     def journeyTimes = journeyTimesFinder.getJourneyTimes(people, stations)
     def centre = minSum(people, journeyTimes)
-    def townAndPostCode = geocoder.reverseGeocode(centre)
-    CentrePoint.builder()
-        .latLong(centre)
-        .locality(townAndPostCode.town)
-        .postCode(townAndPostCode.postcode)
-        .build()
+    def townAndPostCode = geocoder.reverseGeocode(centre.getFirst())
+
+    new Tuple2<CentrePoint, Map<Person, Long>>
+        (
+            CentrePoint.builder()
+                .latLong(centre.getFirst())
+                .locality(townAndPostCode.town)
+                .postCode(townAndPostCode.postcode)
+                .build(),
+            [people, centre.getSecond()].transpose().collectEntries { it }
+        )
   }
 
-  private LatLong minSum(List<Person> people, Map<LatLong, List<Integer>> allTimes) {
+  private Tuple2<LatLong, List<Integer>> minSum(List<Person> people, Map<LatLong, List<Integer>> allTimes) {
     def lowestSoFar = Integer.MAX_VALUE
-    def result = null
+    def resultLatLng = null
 
     allTimes.keySet().forEach({
       def times = allTimes.get(it)
@@ -45,26 +50,11 @@ class TrainStationOnlyMidPointFinder implements MidpointFinder {
         def maxDifference = times.max() - times.min()
         if (maxDifference < lowestSoFar) {
           lowestSoFar = maxDifference
-          result = it
+          resultLatLng = it
         }
       }
     })
-    result
-  }
-
-  private LatLong findLowestTimeForAll(List<Person> people, Map<LatLong, List<Integer>> allTimes) {
-    def result = null
-    def minSum = Integer.MAX_VALUE
-    for (LatLong eachLatLong : allTimes.keySet()) {
-      if (allTimes.get(eachLatLong).size() == people.size()) {
-        def sum = allTimes.get(eachLatLong).sum()
-        if (sum < minSum) {
-          sum = minSum
-          result = eachLatLong
-        }
-      }
-    }
-    result
+    new Tuple2<>(resultLatLng, allTimes.get(resultLatLng))
   }
 
   private Tuple2<LatLong, LatLong> getMinAndMaxLatLng(final List<Person> people) {

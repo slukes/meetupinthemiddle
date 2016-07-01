@@ -4,6 +4,7 @@ import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.services.geocode.Geocoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -29,6 +30,7 @@ class TrainStationFinder implements PointFinder {
    * @return
    */
   @Override
+  @Cacheable("stations")
   List<LatLong> doFind(final LatLong minLatLong, final LatLong maxLatLong) {
     def response = restTemplate.getForObject(format(trainStationApiBaseUrl, minLatLong.lat, minLatLong.lng,
         maxLatLong.lat, maxLatLong.lng), TrainStationResponse)

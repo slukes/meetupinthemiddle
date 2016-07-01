@@ -19,7 +19,7 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
       [(TransportMode.DRIVING): TravelMode.DRIVING, (TransportMode.PUBLIC): TravelMode.TRANSIT]
 
   @Override
-  Map<LatLong, List<Integer>> getJourneyTimes(List<Person> people, List<LatLng> points) {
+  Map<LatLong, List<Integer>> getJourneyTimes(List<Person> people, List<LatLong> points) {
     LatLng[] gmStarts = people
         .stream()
         .map({ new LatLng(it.latLong.lat, it.latLong.lng) })
@@ -43,7 +43,7 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
       //Each element in the row represents a destination
       def latLong = new LatLong(points[i].lat, points[i].lng)
       def list = []
-      for(def j = 0; j < people.size(); j++){
+      for (def j = 0; j < people.size(); j++) {
         list.add(resp.rows[j].elements[i].duration?.inSeconds)
       }
       result.put(latLong, list)

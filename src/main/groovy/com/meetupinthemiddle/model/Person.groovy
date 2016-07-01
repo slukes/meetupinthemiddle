@@ -11,7 +11,7 @@ class Person {
   @NotNull
   String name
   float distance
-  int travelTime
+  long travelTime
   @NotNull
   String from
   LatLong latLong

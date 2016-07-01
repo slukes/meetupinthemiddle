@@ -1,14 +1,13 @@
 package com.meetupinthemiddle.services.poi
-
 import com.google.maps.GeoApiContext
 import com.google.maps.PlacesApi
 import com.google.maps.model.*
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POI
 import com.meetupinthemiddle.model.POIType
-import com.meetupinthemiddle.services.poi.POIFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 import java.util.function.Function
@@ -32,6 +31,7 @@ public class GooglePlacesPOIFinder implements POIFinder {
   }
 
   @Override
+  @Cacheable("pois")
   public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
     PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .type(POI_PLACE_TYPE_MAPPING.get(type))
