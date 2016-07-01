@@ -1,6 +1,7 @@
-package com.meetupinthemiddle.services
+package com.meetupinthemiddle.services.midpoint
 
 import com.meetupinthemiddle.model.LatLong
+import com.meetupinthemiddle.services.geocode.Geocoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -28,21 +29,15 @@ class TrainStationFinder implements PointFinder {
    * @return
    */
   @Override
-  List<LatLong> find(final LatLong minLatLong, final LatLong maxLatLong) {
+  List<LatLong> doFind(final LatLong minLatLong, final LatLong maxLatLong) {
     def response = restTemplate.getForObject(format(trainStationApiBaseUrl, minLatLong.lat, minLatLong.lng,
         maxLatLong.lat, maxLatLong.lng), TrainStationResponse)
     toLatLongs(response)
   }
 
-   /*
-   Converts between train station response and MeetUpInTheMiddle model LatLongs
-   This has had to be converted to call the geocoder since it appears that the types of coordinates are different
-   To what is used by google maps
-   */
-  //TODO find out if I can get around having to geocode - can I convert between the types of coords?
-  private List<LatLong> toLatLongs(response) {
-    response.result.toList().stream().parallel()
-        .map({ geocoder.geocode(it.stationname) })
+  private List<LatLong> toLatLongs(TrainStationResponse response) {
+    response.result.toList().stream()
+        .map({ new LatLong(it.latlong.coordinates[1], it.latlong.coordinates[0]) })
         .collect(Collectors.toList())
   }
 

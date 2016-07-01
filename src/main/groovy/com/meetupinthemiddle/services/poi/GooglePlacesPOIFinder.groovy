@@ -1,4 +1,4 @@
-package com.meetupinthemiddle.services
+package com.meetupinthemiddle.services.poi
 
 import com.google.maps.GeoApiContext
 import com.google.maps.PlacesApi
@@ -6,6 +6,7 @@ import com.google.maps.model.*
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POI
 import com.meetupinthemiddle.model.POIType
+import com.meetupinthemiddle.services.poi.POIFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -16,7 +17,7 @@ import java.util.stream.Collectors
 import static java.util.Arrays.stream
 
 @Service
-public class GooglePOIFinder implements POIFinder {
+public class GooglePlacesPOIFinder implements POIFinder {
   @Autowired
   private GeoApiContext context
 
@@ -31,7 +32,7 @@ public class GooglePOIFinder implements POIFinder {
   }
 
   @Override
-  public List<POI> findPOIs(LatLong location, int numberToFind, POIType type) {
+  public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
     PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .type(POI_PLACE_TYPE_MAPPING.get(type))
         .rankby(RankBy.DISTANCE)

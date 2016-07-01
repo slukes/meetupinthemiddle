@@ -1,7 +1,9 @@
 package com.meetupinthemiddle.services
 import com.meetupinthemiddle.model.LatLong
-import com.meetupinthemiddle.services.TrainStationFinder.TrainStationResponse
-import com.meetupinthemiddle.services.TrainStationFinder.TrainStationResponse.TrainStation
+import com.meetupinthemiddle.services.midpoint.TrainStationFinder.TrainStationResponse
+import com.meetupinthemiddle.services.midpoint.TrainStationFinder.TrainStationResponse.TrainStation
+import com.meetupinthemiddle.services.geocode.Geocoder
+import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +46,7 @@ class TrainStationFinderTest {
     //Given
     when(restTemplate.getForObject(anyString(), eq(TrainStationResponse))).thenReturn(aTrainStationResponse())
     //When
-    trainStationFinder.find(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
+    trainStationFinder.doFind(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
     //Then
     def url = format(trainStationApiBaseUrl, "1.0", "1.0", "3.0", "4.0")
     verify(restTemplate).getForObject(url, TrainStationResponse)
@@ -56,7 +58,7 @@ class TrainStationFinderTest {
     when(restTemplate.getForObject(anyString(), eq(TrainStationResponse))).thenReturn(aTrainStationResponse())
     when(geocoder.geocode(anyString())).thenReturn(aLatLong())
     //When
-    def resp = trainStationFinder.find(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
+    def resp = trainStationFinder.doFind(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
     //Then
     assert resp[0].lat == 1.2f
     assert resp[0].lng == 2.2f

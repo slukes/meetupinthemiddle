@@ -1,19 +1,11 @@
 package com.meetupinthemiddle.controllers
-
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.servlet.ViewResolver
-import org.thymeleaf.TemplateEngine
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
 class MainController {
-  @Autowired
-  TemplateEngine templateEngine
-
-  @Autowired
-  ViewResolver viewResolver
-
   @RequestMapping("/")
   String index() {
     "index"
@@ -30,8 +22,9 @@ class MainController {
   }
 
   //If we don't have what is being asked for, show the home page
-  @RequestMapping("/*")
-  String other() {
+  @RequestMapping("/{page}")
+  String other(@PathVariable("page") String page, RedirectAttributes redirectAttributes) {
+    redirectAttributes.addFlashAttribute("errornotfound", page)
     "redirect:/"
   }
 }

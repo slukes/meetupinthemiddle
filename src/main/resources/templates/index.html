@@ -12,6 +12,10 @@
                   title="Detailed instructions regarding how the page should be used will be included here."></span>
         </section>
 
+        <section id="error-section" class="alert alert-danger"  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
+            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign" th:text="'Sorry, we don\'t know about a page called ' + ${errornotfound}"></span>
+        </section>
+
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
             <input class="form-control" type="text" id="newName" placeholder="name"/>
             <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>

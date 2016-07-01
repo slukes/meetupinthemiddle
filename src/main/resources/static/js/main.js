@@ -1,62 +1,34 @@
-$(document).ready(function () {
-    //Uses jQuery tooltip library to load tooltip
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
 var map;
+var bounds;
+var geocoder;
+var personId = 0;
+var people = {};
+var markers = [];
+var infowindows = [];
+var haveNewValue = false;
+var errorMessages = {
+    UNKNOWN: "Sorry, an unknown error occurred.",
+    NOT_ENOUGH_PEOPLE: "Ooops!  You need at least two people to MeetUpInTheMiddle!",
+    MISSING_NAME: "Ooops!  Looks like you missed out a name!",
+    MISSING_FROM: "Ooops!  We need to know where everyone is travelling from!",
+    MISSING_LAT_LONG: this.UNKNOWN,
+    MISSING_OR_INVALID_POI_TYPE: "Ooops!  Please tell us what kind of place you are looking to meet at!",
+    MISSING_OR_INVALID_TRANSPORT_MODE: "Ooops!  Please tell us how everyone is travelling in!"
+};
 
-function Person(name, from, latLong, transportMode, prettyTransportMode, personId){
-    this.name = name;
-    this.from = from;
-    this.latLong = latLong;
-    this.transportMode = transportMode;
-    this.prettyTransportMode = prettyTransportMode
-    this.personId = personId;
-}
-
-/**
- * This function is a call back from the GoogleMaps JS loading
- * The majority of the apps own JS is within this call back
- * as it makes reference to the map.
- */
-function initMap() {
-    //Keep track of an id so we can easily delete people!
-    var personId = 0;
-    var people = {};
-    var markers = [];
-    var newName = $("#newName"),
-        newFrom = $("#newFrom");
-
-    var bounds = new google.maps.LatLngBounds();
-    var geocoder = new google.maps.Geocoder();
-    //Keep track of the markers and info windows so can iterate over them
-    var infowindows = [];
-
-    //Used to control whether the add person button should be enabled
-    var haveNewValue = false;
-
-    //Load the map
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 54.152141, lng: -3.032227},
-        zoom: 7,
-        mapTypeControl: false
-    });
-
-    //Configure automcomplete for locations
-    //TODO configure this further
-    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('newFrom'),
-        {
-            componentRestrictions: {country: 'gb'}
-        });
-
+$(document).ready(function () {
+    $("[data-toggle='tooltip']").tooltip();
     //If something is entered in both the name and from field
     //the add button should be ungreyed out
-    $(newName).add(newFrom).on('change keyup', function (e) {
+    var newName = $('#newName');
+    var newFrom = $('#newFrom');
+
+    newName.add(newFrom).on("change keyup", function (e) {
         haveNewValue = $.trim(newName.val()).length > 0
             && $.trim(newFrom.val()).length > 0;
 
         if (haveNewValue) {
-            $('#add-person').removeClass('disabled');
+            $("#add-person").removeClass("disabled");
         }
     });
 
@@ -66,29 +38,29 @@ function initMap() {
     // Add a pin to the map
     // Reset the form fields
     // If we now have 2 or more peopl enable the submit button
-    $('#add-person').click(function (e) {
+    $("#add-person").click(function (e) {
         if (!haveNewValue) {
             return;
         }
 
-        var name = $('#newName').val();
-        var location = $('#newFrom').val();
-        var mode = $('#newMode').val();
-        var prettyMode = $('#newMode option[value=' + mode + ']').text()
+        var name = $("#newName").val();
+        var location = $("#newFrom").val();
+        var mode = $("#newMode").val();
+        var prettyMode = $("#newMode").find("option[value=" + mode + "]").text();
 
-        geocoder.geocode({'address': location}, function (results, status) {
+        geocoder.geocode({"address": location}, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 latLng = results[0].geometry.location;
                 addPinToMap(latLng, name);
                 addPerson(name, location, latLng, mode, prettyMode);
 
-                $('#newPersonForm')[0].reset();
+                $("#newPersonForm")[0].reset();
                 haveNewValue = false;
-                $('#add-person').addClass('disabled');
+                $("#add-person").addClass("disabled");
                 personId++;
 
                 if (personId >= 2) {
-                    $('#submitButton').prop('disabled', false);
+                    $("#submitButton").prop("disabled", false);
                 }
             } else {
                 //TODO
@@ -96,7 +68,6 @@ function initMap() {
         });
 
     });
-
 
     function addPinToMap(location, name) {
         var marker = new google.maps.Marker({
@@ -116,13 +87,13 @@ function initMap() {
 
         //TODO it would be more efficient to not make this AJAX request everytime
         //Is it possible to load it into the DOM as a hidden element at the start?
-        $.get('mustache/personTableRow.html', function (template) {
-            $('#peopleTable').append(Mustache.to_html(template, person));
+        $.get("mustache/personTableRow.html", function (template) {
+            $("#peopleTable").append(Mustache.to_html(template, person));
         });
     }
 
     //Removing a person
-    $('body').on('click', '.removePerson', function (e) {
+    $("body").on("click", ".removePerson", function (e) {
         var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
         //Removes pin from map and re-centres
         markers[idToRemove].setMap(null);
@@ -136,14 +107,14 @@ function initMap() {
         centreMap();
 
         //Get rid of the row in the table
-        $(this).closest('tr').remove();
+        $(this).closest("tr").remove();
 
         //And from the JSON we will send
         delete people[idToRemove];
 
         //Disable the submit button if required
-        if ($('#peopleTable tr').length < 2) {
-            $('#submitButton').prop('disabled', true);
+        if ($("#peopleTable tr").length < 2) {
+            $("#submitButton").prop("disabled", true);
         }
     });
 
@@ -162,7 +133,7 @@ function initMap() {
         }
     }
 
-    $('#submitButton').click(function (e) {
+    $("#submitButton").click(function (e) {
         e.preventDefault();
         ajaxSearch();
     });
@@ -178,53 +149,105 @@ function initMap() {
             "poiType": $("#poi").val()
         });
 
-        $.ajax({
-            url: '/search',
-            contentType: 'application/json',
-            method: 'post',
-            data: data,
-            success: function (data) {
-                $('#overlayContent').html(data.html);
-                for (var i = 0; i < data.pois.length; i++) {
-                    var latLng = data.pois[i].latLong;
-                    const marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(latLng.lat, latLng.lng),
-                        label: "" + (i + 1),
-                        clickable: true,
-                        map: map
-                    });
-                    //This is required since initially I was finding that the call back below was reading the value of i
-                    //For the iteration the loop was on at the time of the callback rather than the correct value
-                    const index = i;
-                    $.get('mustache/infowindow.html', function (template) {
-                        var infowindow = new google.maps.InfoWindow({
-                            content: Mustache.to_html(template, data.pois[index])
-                        });
+        req = $.ajax({
+            url: "/search",
+            contentType: "application/json",
+            method: "post",
+            data: data
+        });
 
-                        infowindow.addListener('closeclick', function () {
-                            centreMap();
-                        });
-
-                        infowindows.push(infowindow);
-
-                        marker.addListener('click', function () {
-                            infowindows.forEach(function (eachInfoWindow) {
-                                eachInfoWindow.close();
-                            });
-                            map.setCenter(marker.position);
-                            map.setZoom(15);
-                            infowindow.open(map, marker);
-                        });
-
+        req.done(function (data) {
+            $("#overlayContent").html(data.html);
+            for (i = 0; i < data.pois.length; i++) {
+                var latLng = data.pois[i].latLong;
+                const marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(latLng.lat, latLng.lng),
+                    label: "" + (i + 1),
+                    clickable: true,
+                    map: map
+                });
+                //TODO how can I get rid of this const?  I was trying not to use ECMA 6 features.
+                //This is required since initially I was finding that the call back below was reading the value of i
+                //For the iteration the loop was on at the time of the callback rather than the correct value
+                const index = i;
+                //TODO - more efficient way than ajax here????
+                $.get("mustache/infowindow.html", function (template) {
+                    var infowindow = new google.maps.InfoWindow({
+                        content: Mustache.to_html(template, data.pois[index])
                     });
 
-                    markers.push(marker);
-                    bounds.extend(marker.getPosition());
-                    centreMap();
-                }
+                    infowindow.addListener("closeclick", function () {
+                        centreMap();
+                    });
+
+                    infowindows.push(infowindow);
+
+                    marker.addListener("click", function () {
+                        infowindows.forEach(function (eachInfoWindow) {
+                            eachInfoWindow.close();
+                        });
+                        map.setCenter(marker.position);
+                        map.setZoom(15);
+                        infowindow.open(map, marker);
+                    });
+                });
+
+                markers.push(marker);
+                bounds.extend(marker.getPosition());
+                centreMap();
             }
-        })
+        });
+
+        req.error(function (data) {
+            var errorSection = $("#error-section");
+            if (data.responseJSON.errorReasons) {
+                data.responseJSON.errorReasons.forEach(function (error) {
+                    addError(error);
+                });
+            } else {
+                addError("UNKNOWN");
+            }
+            errorSection.fadeIn();
+        });
     }
 
-    return false;
+});
+
+
+function addError(errorMessage) {
+    $.get("mustache/error.html", function (template) {
+            $("#error-section").append(Mustache.to_html(template, {message: errorMessages[errorMessage]}));
+        }
+    );
+}
+
+function Person(name, from, latLong, transportMode, prettyTransportMode, personId) {
+    this.name = name;
+    this.from = from;
+    this.latLong = latLong;
+    this.transportMode = transportMode;
+    this.prettyTransportMode = prettyTransportMode;
+    this.personId = personId;
+}
+
+function initMap() {
+    bounds = new google.maps.LatLngBounds();
+    geocoder = new google.maps.Geocoder();
+
+    $(document).ready(function () {
+        //Load the map
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {lat: 54.152141, lng: -3.032227},
+            zoom: 7,
+            mapTypeControl: false
+        });
+
+        //Configure automcomplete for locations
+        //TODO configure this further
+        new google.maps.places.Autocomplete(document.getElementById("newFrom"),
+            {
+                componentRestrictions: {country: "gb"}
+            });
+        return false;
+    });
 }
