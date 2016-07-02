@@ -26,7 +26,7 @@ public class MeetupinthemiddleApplication {
   }
 
   @Bean
-  RestTemplate restTemplate(){
+  RestTemplate restTemplate() {
     return new RestTemplate()
   }
 

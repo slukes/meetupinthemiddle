@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 import static com.meetupinthemiddle.model.ErrorResponse.ErrorReason.*
@@ -105,8 +106,8 @@ class SearchController {
   @ExceptionHandler
   @ResponseBody
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  ErrorResponse handleUnknownError(Exception e) {
-    LOGGER.error(e)
+  ErrorResponse handleUnknownError(Exception e, HttpServletRequest req) {
+    LOGGER.error("Error serving $req.requestURI", e)
     new ErrorResponse().with {
       addReason(UNKNOWN)
       it

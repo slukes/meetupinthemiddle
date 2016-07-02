@@ -49,9 +49,9 @@ class MeetUpFacadeImpl implements MeetUpFacade {
   //Primarily implemented so I don't need to go and get the lat long each time when testing
   private setLatLongs(final List<Person> people) {
     people.each {
-//      if(it.latLong == null){
+      if(it.latLong == null){
         it.latLong = geocoder.geocode(it.from)
-//      }
+      }
     }
   }
 }

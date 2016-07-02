@@ -18,12 +18,20 @@ html, body {
     overflow: scroll;
 }
 
+#poiTable tbody :hover {
+    background-color: aliceblue;
+}
+
+#poiTable :hover {
+    cursor: pointer;
+}
+
 @media screen and (min-width: 480px) {
     #overlay {
         width: 25%;
     }
 
-    h1{
+    h1 {
         font-size: 2em;
     }
 }
@@ -33,31 +41,31 @@ html, body {
         width: 100%;
     }
 
-    h1{
+    h1 {
         font-size: 1.5em;
     }
 }
 
-hr{
+hr {
     margin-bottom: 0;
 }
 
-#logo{
+#logo {
     max-height: 10%;
-    float:left;
+    float: left;
 }
 
-#peopleTable td{
-    border : none
+#peopleTable td {
+    border: none
 }
 
-#tooltip{
+#tooltip {
     position: relative;
     top: -25px;
     cursor: help;
 }
 
-#add-person{
+#add-person {
     cursor: pointer;
 }
 
@@ -65,47 +73,48 @@ hr{
     cursor: not-allowed;
 }
 
-.removePerson{
+.removePerson {
     color: red;
-    cursor: hand;
+    cursor: pointer;
 }
 
-.form-control{
+.form-control {
     margin-bottom: 10px;
 }
 
-.glyphSpace{
+.glyphSpace {
     margin-bottom: 25px;
 }
 
-.row{
+.row {
     margin: 0;
 }
 
-.poiMarker{
-    color : lightskyblue;
+.poiMarker {
+    color: lightskyblue;
 }
 
-.personMarker{
-    color : red;
+.personMarker {
+    color: red;
 }
 
-#share{
+#share {
     margin-top: 25px;
 }
 
-.fb-share-button{
+.fb-share-button {
     vertical-align: top;
 }
 
-.infoWindowHeading{
-    float:left;
-}
-.infoWindowHeading img{
-    max-width: 15%;
-    display:inline-block
+.infoWindowHeading {
+    float: left;
 }
 
-.infoWindowHeading h4{
-    display:inline-block
+.infoWindowHeading img {
+    max-width: 15%;
+    display: inline-block
+}
+
+.infoWindowHeading h4 {
+    display: inline-block
 }

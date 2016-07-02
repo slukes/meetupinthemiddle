@@ -3,8 +3,8 @@
     <strong><em th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong>
 
     <table class="table" id="peopleTable">
-        <tbody th:each="person : ${response.people}">
-        <tr class="personRow">
+        <tbody>
+        <tr class="personRow" th:each="person : ${response.people}">
             <td><span class="personMarker glyphicon glyphicon-map-marker"></span></td>
             <td th:text="${person.name}"></td>
             <td th:text="${person.from}"></td>
@@ -14,9 +14,9 @@
     </table>
 
     <h3 th:text="'Local ' + ${response.poiType.text}"></h3>
-    <table id="peopleTable" class="table">
-        <tbody th:each="POI, itr : ${response.POIs}">
-        <tr>
+    <table id="poiTable" class="table">
+        <tbody>
+        <tr th:each="POI, itr : ${response.POIs}">
             <td>
                 <span th:text="${itr.count}"></span>
             </td>
