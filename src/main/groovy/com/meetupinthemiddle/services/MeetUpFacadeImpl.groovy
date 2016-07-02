@@ -42,7 +42,7 @@ class MeetUpFacadeImpl implements MeetUpFacade {
 
   private setTravelTimes(List<Person> people, Map<Person, Long> times) {
     people.each {
-      it.travelTime = times.get(it) / 60
+      it.travelTime = times.get(it) ? times.get(it) / 60 : 0
     }
   }
 

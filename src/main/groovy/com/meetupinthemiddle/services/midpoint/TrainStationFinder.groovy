@@ -1,7 +1,5 @@
 package com.meetupinthemiddle.services.midpoint
-
 import com.meetupinthemiddle.model.LatLong
-import com.meetupinthemiddle.services.geocode.Geocoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -19,9 +17,6 @@ class TrainStationFinder implements PointFinder {
 
   @Autowired
   private RestTemplate restTemplate
-
-  @Autowired
-  private Geocoder geocoder
 
   /**
    * Finds train stations with in a given rectangular area
@@ -43,7 +38,7 @@ class TrainStationFinder implements PointFinder {
         .collect(Collectors.toList())
   }
 
-  //Reprsentation of the model returned by the api
+  //Representation of the model returned by the api
   //I have chosen to have this as an inner class, since there is no need for other classes to be aware of it.
   static class TrainStationResponse {
     Boolean success

@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.controllers
+
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
 import com.meetupinthemiddle.model.ErrorResponse
@@ -64,8 +65,6 @@ class SearchController {
             it.addReason(MISSING_NAME)
           } else if (field.endsWith("from")) {
             it.addReason(MISSING_FROM)
-          } else if (field.endsWith("latLong")) {
-            it.addReason(MISSING_LAT_LONG)
           } else if (field.endsWith("transportMode")) {
             it.addReason(MISSING_OR_INVALID_TRANSPORT_MODE)
           }

@@ -56,12 +56,12 @@ class TrainStationFinderTest {
   void latLongObjectContainsCoords() throws Exception {
     //Given
     when(restTemplate.getForObject(anyString(), eq(TrainStationResponse))).thenReturn(aTrainStationResponse())
-    when(geocoder.geocode(anyString())).thenReturn(aLatLong())
+//    when(geocoder.geocode(anyString())).thenReturn(aLatLong())
     //When
     def resp = trainStationFinder.doFind(new LatLong(lat: 1, lng: 1), new LatLong(lat: 3, lng: 4))
     //Then
-    assert resp[0].lat == 1.2f
-    assert resp[0].lng == 2.2f
+    assert resp[0].lat == 2.2f
+    assert resp[0].lng == 1.2f
   }
 
   private aLatLong() {

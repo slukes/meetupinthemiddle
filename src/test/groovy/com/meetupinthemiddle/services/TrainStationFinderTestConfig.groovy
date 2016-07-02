@@ -1,5 +1,4 @@
 package com.meetupinthemiddle.services
-
 import com.meetupinthemiddle.services.geocode.Geocoder
 import com.meetupinthemiddle.services.midpoint.PointFinder
 import com.meetupinthemiddle.services.midpoint.TrainStationFinder
@@ -10,7 +9,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.web.client.RestTemplate
 
 import static org.mockito.Mockito.mock
-
 @Configuration
 @PropertySource("classpath:application.properties")
 class TrainStationFinderTestConfig {
