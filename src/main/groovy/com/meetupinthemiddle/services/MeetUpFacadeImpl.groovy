@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class MeetUpFacadeImpl implements MeetUpFacade {
   @Autowired
-  MidpointFinder trainStationOnlyMidPointFinder
+  MidpointFinder allMidpointFinder
 
   @Autowired
   private POIFinder poiFinderService
@@ -27,7 +27,7 @@ class MeetUpFacadeImpl implements MeetUpFacade {
   @Override
   Response doSearch(Request request) {
     setLatLongs(request.people)
-    def midPointAndTimes = trainStationOnlyMidPointFinder.findMidpoint(request.people as List<Person>)
+    def midPointAndTimes = allMidpointFinder.findMidpoint(request.people as List<Person>)
     def midPoint = midPointAndTimes.getFirst()
     def pois = poiFinderService.findPOIs(midPoint.latLong, 5, request.poiType)
 

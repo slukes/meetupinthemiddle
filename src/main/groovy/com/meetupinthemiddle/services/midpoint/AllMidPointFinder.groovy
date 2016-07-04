@@ -1,17 +1,15 @@
-package com.meetupinthemiddle.services.midpoint.distributed
+package com.meetupinthemiddle.services.midpoint
 import com.meetupinthemiddle.model.CentrePoint
 import com.meetupinthemiddle.model.Person
 import com.meetupinthemiddle.services.geocode.Geocoder
 import com.meetupinthemiddle.services.journeytimes.JourneyTimesFinder
-import com.meetupinthemiddle.services.midpoint.AbstractMidpointFinder
-import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-//Iteration that will be replaced.
+
 @Service
-class DistributedOnlyMidpointFinder extends AbstractMidpointFinder {
+class AllMidPointFinder extends AbstractMidpointFinder{
   @Autowired
-  PointFinder distributedPointFinder
+  PointFinder [] pointFinders
 
   @Autowired
   JourneyTimesFinder journeyTimesFinder
@@ -22,7 +20,13 @@ class DistributedOnlyMidpointFinder extends AbstractMidpointFinder {
   @Override
   Tuple2<CentrePoint, Map<Person, Long>> findMidpoint(final List<Person> people) {
     def latlongs = getMinAndMaxLatLng(people)
-    def points = distributedPointFinder.doFind(latlongs.first, latlongs.second)
+    def points =  []
+
+    //TODO - paralellise these calls
+    pointFinders.each {
+      points += it.doFind(latlongs.first, latlongs.second)
+    }
+
     def journeyTimes = journeyTimesFinder.getJourneyTimes(people, points)
     def centre = minSum(people, journeyTimes)
     def townAndPostCode = geocoder.reverseGeocode(centre.getFirst())

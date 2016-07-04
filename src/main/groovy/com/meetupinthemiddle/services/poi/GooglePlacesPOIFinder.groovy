@@ -23,18 +23,14 @@ public class GooglePlacesPOIFinder implements POIFinder {
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
-  private static final def POI_PLACE_TYPE_MAPPING = [:]
-
-  static {
-    POI_PLACE_TYPE_MAPPING.put(POIType.RESTAURANT, PlaceType.RESTAURANT)
-    POI_PLACE_TYPE_MAPPING.put(POIType.PUB, PlaceType.BAR)
-  }
+  private static final def POI_PLACE_TYPE_MAPPING = [(POIType.RESTAURANT) : PlaceType.RESTAURANT,
+                                                     (POIType.PUB) : PlaceType.BAR]
 
   @Override
   @Cacheable("pois")
   public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
     PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
-        .type(POI_PLACE_TYPE_MAPPING.get(type))
+        .type(POI_PLACE_TYPE_MAPPING[type])
         .rankby(RankBy.DISTANCE)
         .await()
         .results

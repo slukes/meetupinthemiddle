@@ -43,7 +43,7 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
 
     def i = 0
     while (i < destLength - 1) {
-      def batchSize = destLength - i >= MAX_PER_REQ ? i + MAX_PER_REQ : destLength % 25
+      def batchSize = destLength - i >= MAX_PER_REQ ? MAX_PER_REQ : destLength % 25
       LatLng[] batch = gmDestinations[i .. i + batchSize - 1]
       if(publicGmStarts.length > 0) {
         publicResults << new Tuple2<>(executor.submit { doBatch(publicGmStarts, batch, PUBLIC) }, batch)

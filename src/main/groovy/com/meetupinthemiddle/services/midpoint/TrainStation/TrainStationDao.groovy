@@ -1,5 +1,7 @@
 package com.meetupinthemiddle.services.midpoint.TrainStation
+
 import com.meetupinthemiddle.model.LatLong
+import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -7,17 +9,18 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class TrainStationDao {
+class TrainStationDao implements PointFinder {
   private static final String SQL =
       """SELECT st_y(GEOM) AS LAT, st_x(GEOM) AS LONG
-         from stations
+         FROM stations
          WHERE GEOM && ST_MAKEENVELOPE(:MIN_LONG,:MIN_LAT,:MAX_LONG,:MAX_LAT)"""
 
 
   @Autowired
   private NamedParameterJdbcTemplate jdbcTemplate
 
-  LatLong[] findStationsInBox(LatLong minLatLong, LatLong maxLatLong) {
+  @Override
+  List<LatLong> doFind(LatLong minLatLong, LatLong maxLatLong) {
     def params = new MapSqlParameterSource()
     params.addValue("MIN_LAT", minLatLong.lat)
     params.addValue("MIN_LONG", minLatLong.lng)
@@ -25,6 +28,6 @@ class TrainStationDao {
     params.addValue("MAX_LONG", maxLatLong.lng)
 
     jdbcTemplate.query(SQL, params,
-        (RowMapper) { rs, i -> new LatLong(rs.getDouble("LAT"), rs.getDouble("LONG"))})
+        (RowMapper) { rs, i -> new LatLong(rs.getDouble("LAT"), rs.getDouble("LONG")) })
   }
 }
