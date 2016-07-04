@@ -17,9 +17,9 @@
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
-            <input class="form-control" type="text" id="newName" placeholder="name"/>
-            <input class="form-control" type="text" id="newFrom" placeholder="traveling from"/>
-            <select class="form-control" id="newMode" title="mode of transport">
+            <input class="form-control person-form-control" type="text" id="newName" placeholder="name"/>
+            <input class="form-control person-form-control" type="text" id="newFrom" placeholder="traveling from"/>
+            <select class="form-control person-form-control" id="newMode" title="mode of transport">
                 <option th:each="type : ${T(com.meetupinthemiddle.model.TransportMode).values()}"
                         th:value="${type}" th:text="${type.getText()}"></option>
             </select>

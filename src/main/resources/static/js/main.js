@@ -105,7 +105,7 @@ $(document).ready(function () {
    *
    * If we now have enough people in the table, we enable the submit button.
    */
-  addPersonBtn.click(function () {
+  var addPerson = function () {
     if (!haveNewValue) {
       return;
     }
@@ -132,7 +132,16 @@ $(document).ready(function () {
         addError("UNKNOWN_LOCATION");
       }
     });
+  };
+
+  addPersonBtn.click(addPerson);
+
+  $(".person-form-control").keyup(function (e) {
+    if (e.which == 13) { //enter
+      addPerson();
+    }
   });
+
 
   /**
    * When we click the x next to a row in the table,
