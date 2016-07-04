@@ -1,6 +1,5 @@
-*.class
-*.war
+/catalina.base_IS_UNDEFINED
+/catalina.home_IS_UNDEFINED
 target/
-lib/
 *.log
 *.iml
