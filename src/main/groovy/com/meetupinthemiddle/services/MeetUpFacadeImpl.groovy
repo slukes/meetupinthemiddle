@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.services
+
 import com.meetupinthemiddle.model.Person
 import com.meetupinthemiddle.model.Request
 import com.meetupinthemiddle.model.Response
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class MeetUpFacadeImpl implements MeetUpFacade {
   @Autowired
-  MidpointFinder midPointFinder
+  MidpointFinder trainStationOnlyMidPointFinder
 
   @Autowired
   private POIFinder poiFinderService
@@ -26,18 +27,18 @@ class MeetUpFacadeImpl implements MeetUpFacade {
   @Override
   Response doSearch(Request request) {
     setLatLongs(request.people)
-    def midPointAndTimes = midPointFinder.findMidpoint(request.people as List<Person>)
+    def midPointAndTimes = trainStationOnlyMidPointFinder.findMidpoint(request.people as List<Person>)
     def midPoint = midPointAndTimes.getFirst()
     def pois = poiFinderService.findPOIs(midPoint.latLong, 5, request.poiType)
 
     setTravelTimes(request.people, midPointAndTimes.second)
 
-        Response.builder()
-            .people(request.people as Person[])
-            .centrePoint(midPoint)
-            .poiType(request.poiType)
-            .POIs(pois)
-            .build()
+    Response.builder()
+        .people(request.people as Person[])
+        .centrePoint(midPoint)
+        .poiType(request.poiType)
+        .POIs(pois)
+        .build()
   }
 
   private setTravelTimes(List<Person> people, Map<Person, Long> times) {
@@ -46,10 +47,9 @@ class MeetUpFacadeImpl implements MeetUpFacade {
     }
   }
 
-  //Primarily implemented so I don't need to go and get the lat long each time when testing
   private setLatLongs(final List<Person> people) {
     people.each {
-      if(it.latLong == null){
+      if (it.latLong == null) {
         it.latLong = geocoder.geocode(it.from)
       }
     }

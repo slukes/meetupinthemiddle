@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.services.geocode
+
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import com.google.maps.model.AddressComponent
@@ -21,8 +22,10 @@ class GoogleMapsGeocoder implements Geocoder {
   LatLong geocode(final String location) {
     def resp = GeocodingApi.geocode(context, location).await()
     if (resp.length > 0) {
-      def result = Arrays.<GeocodingResult>stream(resp)
-          .filter({it.addressComponents.find({it.types.contains(AddressComponentType.COUNTRY)}).shortName == "GB"}).findFirst().get()
+      def result = Arrays.<GeocodingResult> stream(resp)
+          .filter({
+        it.addressComponents.find({ it.types.contains(AddressComponentType.COUNTRY) }).shortName == "GB"
+      }).findFirst().get()
       new LatLong(lat: result.geometry.location.lat, lng: result.geometry.location.lng)
     } else {
       return null
@@ -36,18 +39,18 @@ class GoogleMapsGeocoder implements Geocoder {
     new TownAndPostcode(findTown(resp), findPostCode(resp))
   }
 
-  private String findTown(GeocodingResult[] results){
-    for(GeocodingResult eachResult : results){
-      for(AddressComponent eachComponent : eachResult.addressComponents){
-        if(eachComponent.types.contains(AddressComponentType.POSTAL_TOWN)){
+  private String findTown(GeocodingResult[] results) {
+    for (GeocodingResult eachResult : results) {
+      for (AddressComponent eachComponent : eachResult.addressComponents) {
+        if (eachComponent.types.contains(AddressComponentType.POSTAL_TOWN)) {
           return eachComponent.longName
         }
       }
     }
     //If we didn't get a postal town try a level down
-    for(GeocodingResult eachResult : results){
-      for(AddressComponent eachComponent : eachResult.addressComponents){
-        if(eachComponent.types.contains(AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_2)){
+    for (GeocodingResult eachResult : results) {
+      for (AddressComponent eachComponent : eachResult.addressComponents) {
+        if (eachComponent.types.contains(AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_2)) {
           return eachComponent.longName
         }
       }
@@ -55,10 +58,10 @@ class GoogleMapsGeocoder implements Geocoder {
     return ""
   }
 
-  private String findPostCode(GeocodingResult[] results){
-    for(GeocodingResult eachResult : results){
-      for(AddressComponent eachComponent : eachResult.addressComponents){
-        if(eachComponent.types.contains(AddressComponentType.POSTAL_CODE)){
+  private String findPostCode(GeocodingResult[] results) {
+    for (GeocodingResult eachResult : results) {
+      for (AddressComponent eachComponent : eachResult.addressComponents) {
+        if (eachComponent.types.contains(AddressComponentType.POSTAL_CODE)) {
           return eachComponent.longName
         }
       }

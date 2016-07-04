@@ -30,6 +30,8 @@ public class MeetupinthemiddleApplication {
     return new RestTemplate()
   }
 
+
+
   @Bean
   static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer()

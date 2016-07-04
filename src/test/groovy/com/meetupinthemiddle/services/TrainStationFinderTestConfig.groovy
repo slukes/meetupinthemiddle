@@ -1,7 +1,7 @@
 package com.meetupinthemiddle.services
 import com.meetupinthemiddle.services.geocode.Geocoder
 import com.meetupinthemiddle.services.midpoint.PointFinder
-import com.meetupinthemiddle.services.midpoint.TrainStationFinder
+import com.meetupinthemiddle.services.midpoint.TrainStation.TrainStationFinder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource

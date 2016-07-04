@@ -1,7 +1,7 @@
 package com.meetupinthemiddle.services
 import com.meetupinthemiddle.model.LatLong
-import com.meetupinthemiddle.services.midpoint.TrainStationFinder.TrainStationResponse
-import com.meetupinthemiddle.services.midpoint.TrainStationFinder.TrainStationResponse.TrainStation
+import com.meetupinthemiddle.services.midpoint.TrainStation.TrainStationFinder.TrainStationResponse
+import com.meetupinthemiddle.services.midpoint.TrainStation.TrainStationFinder.TrainStationResponse.TrainStation
 import com.meetupinthemiddle.services.geocode.Geocoder
 import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.junit.Before

@@ -12,7 +12,6 @@ var errorMessages = {
   NOT_ENOUGH_PEOPLE: "Ooops!  You need at least two people to MeetUpInTheMiddle!",
   MISSING_NAME: "Ooops!  Looks like you missed out a name!",
   MISSING_FROM: "Ooops!  We need to know where everyone is travelling from!",
-  MISSING_LAT_LONG: this.UNKNOWN,
   MISSING_OR_INVALID_POI_TYPE: "Ooops!  Please tell us what kind of place you are looking to meet at!",
   MISSING_OR_INVALID_TRANSPORT_MODE: "Ooops!  Please tell us how everyone is travelling in!",
   UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations."
@@ -35,8 +34,8 @@ $.get("mustache/error.html", function (template) {
 
 $(document).ready(function () {
   var newPersonForm = $("#newPersonForm");
-  var newName = $('#newName');
-  var newFrom = $('#newFrom');
+  var newName = $("#newName");
+  var newFrom = $("#newFrom");
   var newMode = $("#newMode");
   var addPersonBtn = $("#add-person");
   var peopleTable = $("#peopleTable");
@@ -44,7 +43,7 @@ $(document).ready(function () {
 
   $("[data-toggle='tooltip']").tooltip();
 
-  newName.add(newFrom).on("change keyup", function (e) {
+  newName.add(newFrom).on("change keyup", function () {
     haveNewValue = $.trim(newName.val()).length > 0
       && $.trim(newFrom.val()).length > 0;
 
@@ -53,7 +52,7 @@ $(document).ready(function () {
     }
   });
 
-  addPersonBtn.click(function (e) {
+  addPersonBtn.click(function () {
     if (!haveNewValue) {
       return;
     }
@@ -65,14 +64,14 @@ $(document).ready(function () {
 
     geocoder.geocode({"address": location}, function (results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
-        latLng = results[0].geometry.location;
+        var latLng = results[0].geometry.location;
         addPinToMap(latLng, name);
         addPerson(name, location, latLng, mode, prettyMode);
 
         newPersonForm[0].reset();
         haveNewValue = false;
         addPersonBtn.prop("disabled", true);
-        personId++;
+        personId += 1;
 
         if (personId >= 2) {
           submitButton.prop("disabled", false);
@@ -144,8 +143,11 @@ $(document).ready(function () {
   });
 
   function ajaxSearch() {
-    $("#error-section").fadeOut();
-    submitButton.button('loading');
+    var errorSection  = $("#error-section");
+    errorSection.fadeOut();
+    errorSection.empty();
+
+    submitButton.button("loading");
 
     var data = JSON.stringify({
       "people": Object.keys(people).map(function (key) {
@@ -163,7 +165,7 @@ $(document).ready(function () {
 
     req.done(function (data) {
       $("#overlayContent").html(data.html);
-      for (i = 0; i < data.pois.length; i++) {
+      for (var i = 0; i < data.pois.length; i++) {
         var latLng = data.pois[i].latLong;
         const marker = new google.maps.Marker({
           position: new google.maps.LatLng(latLng.lat, latLng.lng),
@@ -207,7 +209,7 @@ $(document).ready(function () {
     });
 
     req.error(function (data) {
-      $('#submitButton').button('reset');
+      $("#submitButton").button("reset");
       if (data.responseJSON.errorReasons) {
         data.responseJSON.errorReasons.forEach(function (error) {
           addError(error);

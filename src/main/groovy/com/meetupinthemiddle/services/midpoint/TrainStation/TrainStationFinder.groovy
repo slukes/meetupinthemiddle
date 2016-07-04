@@ -1,5 +1,8 @@
-package com.meetupinthemiddle.services.midpoint
+package com.meetupinthemiddle.services.midpoint.TrainStation
+
 import com.meetupinthemiddle.model.LatLong
+import com.meetupinthemiddle.services.midpoint.PointFinder
+import org.apache.commons.lang.time.StopWatch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -27,8 +30,12 @@ class TrainStationFinder implements PointFinder {
   @Override
   @Cacheable("stations")
   List<LatLong> doFind(final LatLong minLatLong, final LatLong maxLatLong) {
+    def stopwatch = new StopWatch()
+    stopwatch.start()
     def response = restTemplate.getForObject(format(trainStationApiBaseUrl, minLatLong.lat, minLatLong.lng,
         maxLatLong.lat, maxLatLong.lng), TrainStationResponse)
+    stopwatch.stop()
+    println stopwatch.getTime()
     toLatLongs(response)
   }
 
