@@ -26,26 +26,6 @@ html, body {
     cursor: pointer;
 }
 
-@media screen and (min-width: 480px) {
-    #overlay {
-        width: 25%;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    #overlay {
-        width: 100%;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-}
-
 hr {
     margin-bottom: 0;
 }
@@ -117,4 +97,58 @@ hr {
 
 .infoWindowHeading h4 {
     display: inline-block
+}
+
+/*non - mobile*/
+@media screen and (min-width: 760px) {
+    #overlay {
+        width: 25%;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    #grip {
+        display: none;
+    }
+}
+
+/*mobile*/
+@media screen and (max-width: 760px) {
+    #overlay {
+        width: 100%;
+    }
+
+    #overlayContent {
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    #grip {
+        content: '....';
+        width: 8%;
+        height: 100%;
+        padding-top: 45%;
+        padding-left: 2%;
+        padding-right: 2%;
+        position: absolute;
+        left: 92%;
+        display: inline-block;
+        overflow: hidden;
+        line-height: 7px;
+        vertical-align: middle;
+        font-size: 14px;
+        letter-spacing: 2px;
+        color: #143a67;
+        text-shadow: 1px 0 1px rgba(54, 28, 255, 0.66);
+        font-weight: 500;
+    }
+
+    #grip::after {
+        content: '.. .. .. ..';
+    }
 }

@@ -4,6 +4,7 @@
 <body>
 <header th:replace="fragments/layout :: header"></header>
 <section id="overlay">
+    <span id="grip"></span>
     <section id="overlayContent">
         <!--TODO put instructions here.-->
         <section class="glyphSpace">
@@ -12,8 +13,10 @@
                   title="Detailed instructions regarding how the page should be used will be included here."></span>
         </section>
 
-        <section id="error-section" class="alert alert-danger"  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
-            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign" th:text="'Sorry, we don\'t know about a page called ' + ${errornotfound}"></span>
+        <section id="error-section" class="alert alert-danger"
+                 th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
+            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"
+                  th:text="'Sorry, we don\'t know about a page called ' + ${errornotfound}"></span>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
@@ -40,10 +43,10 @@
         </form>
     </section>
 
-    <section id="share" th:replace="fragments/social :: share"> </section>
-    </section>
+    <section id="share" th:replace="fragments/social :: share"></section>
+</section>
 </section>
 <section class="" id="map"></section>
-<footer th:replace="fragments/layout :: share"></footer>
+<footer th:replace="fragments/layout :: footer"></footer>
 </body>
 </html>

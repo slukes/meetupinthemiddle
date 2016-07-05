@@ -6,6 +6,8 @@ var people = {};
 var poiMarkers = [];
 var infowindows = [];
 var haveNewValue = false;
+var mobileWidth = 760;
+var isMobile = $(window).width() < mobileWidth;
 
 //Mapping between error messages in the java enumeration and what should be shown to the user.
 var errorMessages = {
@@ -50,9 +52,12 @@ $(document).ready(function () {
   var addPersonBtn = $("#add-person");
   var peopleTable = $("#peopleTable");
   var submitButton = $("#submitButton");
+  var overlay = $("#overlay");
+  var grip = $("#grip");
 
   $("[data-toggle='tooltip']").tooltip();
 
+  //CORE FUNCTIONALITY
   function addPinToMap(location, name) {
     var marker = new google.maps.Marker({
       position: location,
@@ -238,10 +243,12 @@ $(document).ready(function () {
         });
 
         infowindow = new google.maps.InfoWindow({
-          content: Mustache.to_html(infoWindowTemplate, data.pois[i])
+          content: Mustache.to_html(infoWindowTemplate, data.pois[i]),
+          maxWidth: isMobile ? 200 : 500
         });
 
         infowindow.addListener("closeclick", function () {
+          resetOverlay();
           centreMap();
         });
 
@@ -252,12 +259,13 @@ $(document).ready(function () {
         poiMarkers.push(marker);
         bounds.extend(marker.getPosition());
         centreMap();
+        bounceOverlay();
       }
 
       //If we click on a POI table row, simulate a click on the coresponding marker
       $("#poiTable").find("tr").click(function () {
+        peelBackOverlay();
         google.maps.event.trigger(poiMarkers[$(this).index()], 'click');
-        poiMarkers[$(this).index()].click();
       });
     });
 
@@ -276,28 +284,75 @@ $(document).ready(function () {
       $("#error-section").fadeIn();
     });
   }
-});
 
-//Need to do this outside of the loop or else we always open the same one!
-function addPoiMarkerEventHandler(marker, infowindow) {
-  marker.addListener("click", function () {
-    infowindows.forEach(function (eachInfoWindow) {
-      eachInfoWindow.close();
+  //Need to do this outside of the loop or else we always open the same one!
+  function addPoiMarkerEventHandler(marker, infowindow) {
+    marker.addListener("click", function () {
+      infowindows.forEach(function (eachInfoWindow) {
+        eachInfoWindow.close();
+      });
+      map.setCenter(marker.position);
+      map.setZoom(15);
+      infowindow.open(map, marker);
     });
-    map.setCenter(marker.position);
-    map.setZoom(15);
-    infowindow.open(map, marker);
-  });
-}
+  }
 
-/**
- * Use mustache to add an error - simples!
- */
-function addError(errorMessage) {
-  var errorSection = $("#error-section");
-  errorSection.append(Mustache.to_html(errorTemplate, {message: errorMessages[errorMessage]}));
-  errorSection.fadeIn();
-}
+  /**
+   * Use mustache to add an error - simples!
+   */
+  function addError(errorMessage) {
+    var errorSection = $("#error-section");
+    errorSection.append(Mustache.to_html(errorTemplate, {message: errorMessages[errorMessage]}));
+    errorSection.fadeIn();
+  }
+
+
+  //Calc each time encase they have rotated the device.
+  maxleft = function () {
+    return 0 - $(window).width() * 0.85;
+  };
+
+  //Ability to slide overlay to see map if we are on a mobile.
+  if (isMobile) {
+    grip.on("touchmove", function (e) {
+      var x = e.originalEvent.changedTouches[0].clientX;
+      overlay.css('left', x - $(window).width() + 'px');
+      e.preventDefault();
+    });
+
+    grip.on("touchend", function (e) {
+      var x = e.originalEvent.changedTouches[0].clientX;
+
+      if (x - $(window).width() < maxleft() / 2) {
+        peelBackOverlay()
+      } else {
+        resetOverlay();
+      }
+
+      e.preventDefault();
+    });
+  }
+
+  function peelBackOverlay() {
+    if (isMobile) {
+      overlay.animate({left: maxleft()}, "fast");
+    }
+  }
+
+  function resetOverlay() {
+    if (isMobile) {
+      overlay.animate({left: 0}, "fast");
+    }
+  }
+
+  //Visual clue to users that you can peel back
+  function bounceOverlay() {
+    if (isMobile) {
+      overlay.animate({left: -10}, "fast");
+      overlay.animate({left: 0}, "fast");
+    }
+  }
+});
 
 function initMap() {
   bounds = new google.maps.LatLngBounds();
