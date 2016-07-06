@@ -1,7 +1,14 @@
 package com.meetupinthemiddle.displayUtils
 
-/**
- * Created by Sam Lukes on 06/07/2016.
- */
+import org.springframework.stereotype.Component
+
+@Component
 class TimeFormatter {
+  int getHours(int minutes){
+    minutes / 60;
+  }
+
+  int getMinutes(int minutes){
+    minutes % 60;
+  }
 }

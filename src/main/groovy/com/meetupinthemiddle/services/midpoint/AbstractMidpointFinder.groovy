@@ -15,7 +15,7 @@ abstract class AbstractMidpointFinder implements MidpointFinder {
       def times = allTimes.get(it)
       println("" + it + "" + times)
       //times.size() == people.size() &&
-      if (!times.contains(null)) {
+      if (times.size() == people.size() && !times.contains(null)) {
         def maxDifference = times.max() - times.min()
         if (maxDifference < lowestSoFar) {
           lowestSoFar = maxDifference

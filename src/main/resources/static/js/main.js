@@ -24,7 +24,7 @@ var errorMessages = {
  I need to fetch the templates from the server, my first attempt
  did the get request every time we needed the template but given
  they will certainly be needed and more than once it seemed a waste.
- What is the usual approach?  I could include them in the DOM????
+ What is the usual approach?  I could include / hide them in the DOM????
  */
 
 var infoWindowTemplate;
@@ -47,16 +47,8 @@ $(document).ready(function () {
   // so we have a way of putting the page back to its original
   // state later on, if the user clicks "MeetUpAgain".
   var searchOverlayContent = $("#overlayContent")[0].innerHTML;
-
-  var newPersonForm;
-  var newName;
-  var newFrom;
-  var newMode;
-  var addPersonBtn;
-  var peopleTable;
-  var submitButton;
-  var overlay;
-  var grip;
+  var newPersonForm, newName, newFrom, newMode, addPersonBtn, peopleTable,
+    submitButton, overlay, grip;
 
   addHomePageEventHandlers();
   $("[data-toggle='tooltip']").tooltip();
@@ -72,6 +64,8 @@ $(document).ready(function () {
     submitButton = $("#submitButton");
     overlay = $("#overlay");
     grip = $("#grip");
+
+    newName.focus();
 
     //If both the name and location field have text in them, enable the add person button
     newName.add(newFrom).on("change keyup", function () {
@@ -123,6 +117,7 @@ $(document).ready(function () {
     $(".person-form-control").keyup(function (e) {
       if (e.which == 13) { //enter
         addPerson();
+        newName.focus();
       }
     });
 
@@ -296,12 +291,16 @@ $(document).ready(function () {
         errorSection.empty();
 
         //Empty the current state of the app
-        //Empty the current state of the app
         for (id in people) {
           people[id].person.remove();
         }
 
         infowindows.length = 0;
+
+        poiMarkers.forEach(function(){
+          this.setMap(null);
+        });
+
         poiMarkers.length = 0;
         centreMap();
 
