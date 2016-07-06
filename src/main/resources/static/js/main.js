@@ -1,7 +1,5 @@
-var map;
+var map, bounds, geocoder;
 var ukCentre = {lat: 54.152141, lng: -3.032227};
-var bounds;
-var geocoder;
 var personId = 0;
 var people = {};
 var poiMarkers = [];
@@ -10,7 +8,7 @@ var haveNewValue = false;
 var mobileWidth = 760;
 var isMobile = $(window).width() < mobileWidth;
 
-//Mapping between error messages in the java enumeration and what should be shown to the user.
+//Mapping between error messages in the groovy enum and what should be shown to the user.
 var errorMessages = {
   UNKNOWN: "Sorry, an unknown error occurred.",
   NOT_ENOUGH_PEOPLE: "Ooops!  You need at least two people to MeetUpInTheMiddle!",
