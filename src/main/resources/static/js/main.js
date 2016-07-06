@@ -1,4 +1,5 @@
 var map;
+var ukCentre = {lat: 54.152141, lng: -3.032227};
 var bounds;
 var geocoder;
 var personId = 0;
@@ -38,26 +39,121 @@ $.get("mustache/personTableRow.html", function (template) {
   tableRowTemplate = template;
 });
 
-var errorTemplate;
+var errorTemplate, autocomplete;
 $.get("mustache/error.html", function (template) {
   errorTemplate = template;
 });
 
 $(document).ready(function () {
-  //We need these selectors more than once so lets get them now
-  var newPersonForm = $("#newPersonForm");
-  var newName = $("#newName");
-  var newFrom = $("#newFrom");
-  var newMode = $("#newMode");
-  var addPersonBtn = $("#add-person");
-  var peopleTable = $("#peopleTable");
-  var submitButton = $("#submitButton");
-  var overlay = $("#overlay");
-  var grip = $("#grip");
+  //Grab the initial content over the overlay before anything happens
+  // so we have a way of putting the page back to its original
+  // state later on, if the user clicks "MeetUpAgain".
+  var searchOverlayContent = $("#overlayContent")[0].innerHTML;
 
+  var newPersonForm;
+  var newName;
+  var newFrom;
+  var newMode;
+  var addPersonBtn;
+  var peopleTable;
+  var submitButton;
+  var overlay;
+  var grip;
+
+  addHomePageEventHandlers();
   $("[data-toggle='tooltip']").tooltip();
 
   //CORE FUNCTIONALITY
+  function addHomePageEventHandlers() {
+    newPersonForm = $("#newPersonForm");
+    newName = $("#newName");
+    newFrom = $("#newFrom");
+    newMode = $("#newMode");
+    addPersonBtn = $("#add-person");
+    peopleTable = $("#peopleTable");
+    submitButton = $("#submitButton");
+    overlay = $("#overlay");
+    grip = $("#grip");
+
+    //If both the name and location field have text in them, enable the add person button
+    newName.add(newFrom).on("change keyup", function () {
+      haveNewValue = $.trim(newName.val()).length > 0
+        && $.trim(newFrom.val()).length > 0;
+
+      if (haveNewValue) {
+        addPersonBtn.removeClass("disabled");
+      }
+    });
+
+    /**
+     * When the add person button is clicked, if we have new entries in the form,
+     * we geocode the location add a map pin and then add a person to the table.
+     *
+     * If we now have enough people in the table, we enable the submit button.
+     */
+    var addPerson = function () {
+      if (!haveNewValue) {
+        return;
+      }
+
+      var name = newName.val();
+      var location = newFrom.val();
+      var mode = newMode.val();
+      //How to display it to the user
+      var prettyMode = newMode.find("option[value=" + mode + "]").text();
+      geocoder.geocode({"address": location}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          var latLng = results[0].geometry.location;
+          new Person(name, location, latLng, mode, prettyMode);
+
+          newPersonForm[0].reset();
+          haveNewValue = false;
+          addPersonBtn.addClass("disabled");
+
+          if (personId >= 2) {
+            submitButton.prop("disabled", false);
+          }
+        } else {
+          //TODO if the geo-coded location is not in the UK - give a sensible error.  This needs doing on the backend too.
+          addError("UNKNOWN_LOCATION");
+        }
+      });
+    };
+
+    addPersonBtn.click(addPerson);
+
+    $(".person-form-control").keyup(function (e) {
+      if (e.which == 13) { //enter
+        addPerson();
+      }
+    });
+
+
+    /**
+     * When we click the x next to a row in the table,
+     * we need to remove the row from the table,
+     * remove the pin from the map and from the JSON object that we
+     * are building up to send to the backend.
+     */
+    $("body").on("click", ".removePerson", function (e) {
+      var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
+      people[idToRemove].remove();
+
+      //Get rid of the row in the table
+      $(this).closest("tr").remove();
+
+      //Disable the submit button if required
+      if (peopleTable.find("tr").length < 2) {
+        submitButton.prop("disabled", true);
+      }
+    });
+
+    submitButton.click(function (e) {
+      e.preventDefault();
+      ajaxSearch();
+    });
+  }
+
   function addPinToMap(location, name) {
     var marker = new google.maps.Marker({
       position: location,
@@ -74,18 +170,24 @@ $(document).ready(function () {
     this.from = from;
     this.latLong = latLong;
     this.transportMode = transportMode;
-    this.prettyTransportMode = prettyTransportMode;
     this.id = personId;
-    people[personId] = this;
-    this.marker = addPinToMap(latLong, name);
+
+    //The properties of "this" are the ones we want to actually send to the backend
+    //The ones in the object are only required by the JS.
+    people[this.id] = {
+      person: this,
+      marker: addPinToMap(latLong, name),
+      prettyTransportMode: prettyTransportMode
+    };
+
     centreMap();
 
     personId += 1;
     $("#peopleTable").append(Mustache.to_html(tableRowTemplate, this));
 
     this.remove = function () {
+      people[this.id].marker.setMap(null);
       delete people[this.id];
-      this.marker.setMap(null);
       bounds = new google.maps.LatLngBounds();
       for (person in people) {
         bounds.extend(people[person].marker.getPosition());
@@ -93,79 +195,6 @@ $(document).ready(function () {
       centreMap();
     }
   }
-
-  //If both the name and location field have text in them, enable the add person button
-  newName.add(newFrom).on("change keyup", function () {
-    haveNewValue = $.trim(newName.val()).length > 0
-      && $.trim(newFrom.val()).length > 0;
-
-    if (haveNewValue) {
-      addPersonBtn.removeClass("disabled");
-    }
-  });
-
-  /**
-   * When the add person button is clicked, if we have new entries in the form,
-   * we geocode the location add a map pin and then add a person to the table.
-   *
-   * If we now have enough people in the table, we enable the submit button.
-   */
-  var addPerson = function () {
-    if (!haveNewValue) {
-      return;
-    }
-
-    var name = newName.val();
-    var location = newFrom.val();
-    var mode = newMode.val();
-    //How to display it to the user
-    var prettyMode = newMode.find("option[value=" + mode + "]").text();
-    geocoder.geocode({"address": location}, function (results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        var latLng = results[0].geometry.location;
-        new Person(name, location, latLng, mode, prettyMode);
-
-        newPersonForm[0].reset();
-        haveNewValue = false;
-        addPersonBtn.addClass("disabled");
-
-        if (personId >= 2) {
-          submitButton.prop("disabled", false);
-        }
-      } else {
-        //TODO if the geo-coded location is not in the UK - give a sensible error.  This needs doing on the backend too.
-        addError("UNKNOWN_LOCATION");
-      }
-    });
-  };
-
-  addPersonBtn.click(addPerson);
-
-  $(".person-form-control").keyup(function (e) {
-    if (e.which == 13) { //enter
-      addPerson();
-    }
-  });
-
-
-  /**
-   * When we click the x next to a row in the table,
-   * we need to remove the row from the table,
-   * remove the pin from the map and from the JSON object that we
-   * are building up to send to the backend.
-   */
-  $("body").on("click", ".removePerson", function (e) {
-    var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
-    people[idToRemove].remove();
-
-    //Get rid of the row in the table
-    $(this).closest("tr").remove();
-
-    //Disable the submit button if required
-    if (peopleTable.find("tr").length < 2) {
-      submitButton.prop("disabled", true);
-    }
-  });
 
   /**
    * If there are no more markers, centre on the whole UK,
@@ -184,11 +213,6 @@ $(document).ready(function () {
     }
   }
 
-  submitButton.click(function (e) {
-    e.preventDefault();
-    ajaxSearch();
-  });
-
   /**
    * Does the main search function using AJAX.
    */
@@ -203,14 +227,8 @@ $(document).ready(function () {
 
     //Convert the object to JSON
     var data = JSON.stringify({
-      //TODO - this is probably a code smell...
-      //Something here was causing a circular reference - just send what's required
-      "people": Object.keys(people).map(function (key) {
-        delete people[key].remove;
-        delete people[key].prettyTransportMode;
-        delete people[key].marker;
-        delete people[key].id;
-        return people[key];
+      "people": Object.keys(people).map(function (id) {
+        return people[id].person;
       }),
       "poiType": $("#poi").val()
     });
@@ -267,6 +285,33 @@ $(document).ready(function () {
         peelBackOverlay();
         google.maps.event.trigger(poiMarkers[$(this).index()], 'click');
       });
+
+      //If the user clicks to meetupagain, grab the original contents of
+      // of the overlay and put it back.  This is a hack to get round
+      // having to reload the whole map which is slow if we just made the button an anchor
+      // of "/"
+      $("#searchAgain").click(function (e) {
+        //Switch the HTML
+        $("#overlayContent").html(searchOverlayContent);
+        //Ditch any errors we had the first time
+        errorSection.hide();
+        errorSection.empty();
+
+        //Empty the current state of the app
+        //Empty the current state of the app
+        for (id in people) {
+          people[id].person.remove();
+        }
+
+        infowindows.length = 0;
+        poiMarkers.length = 0;
+        centreMap();
+
+        //Finally, now its safe put back the event handlers
+        initAutocomplete();
+        addHomePageEventHandlers();
+        e.preventDefault();
+      })
     });
 
     //If there was an error, the overlay won't have changed,
@@ -306,11 +351,10 @@ $(document).ready(function () {
     errorSection.fadeIn();
   }
 
-
   //Calc each time encase they have rotated the device.
-  maxleft = function () {
+  function maxleft() {
     return 0 - $(window).width() * 0.85;
-  };
+  }
 
   //Ability to slide overlay to see map if we are on a mobile.
   if (isMobile) {
@@ -361,17 +405,21 @@ function initMap() {
   $(document).ready(function () {
     //Load the map
     map = new google.maps.Map(document.getElementById("map"), {
-      center: {lat: 54.152141, lng: -3.032227}, //Centre of UK
+      center: ukCentre,
       zoom: 7,
       mapTypeControl: false
     });
+    initAutocomplete();
 
-    new google.maps.places.Autocomplete(document.getElementById("newFrom"),
-      {
-        componentRestrictions: {
-          country: "gb"
-        }
-      });
     return false;
   });
+}
+
+function initAutocomplete() {
+  new google.maps.places.Autocomplete(document.getElementById("newFrom"),
+    {
+      componentRestrictions: {
+        country: "gb"
+      }
+    });
 }
