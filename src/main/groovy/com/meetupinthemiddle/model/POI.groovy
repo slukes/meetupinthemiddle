@@ -8,4 +8,5 @@ class POI {
   LatLong latLong
   float distanceFromCentrePoint
   String imageUrl
+  String [] openingTimes
 }

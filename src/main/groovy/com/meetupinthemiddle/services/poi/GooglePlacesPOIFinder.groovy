@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service
 import java.util.function.Function
 import java.util.stream.Collectors
 
+import static com.meetupinthemiddle.model.POIType.RESTAURANT
 import static java.util.Arrays.stream
 
 @Service
@@ -23,8 +24,8 @@ public class GooglePlacesPOIFinder implements POIFinder {
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
-  private static final def POI_PLACE_TYPE_MAPPING = [(POIType.RESTAURANT) : PlaceType.RESTAURANT,
-                                                     (POIType.PUB) : PlaceType.BAR]
+  private static final def POI_PLACE_TYPE_MAPPING = [(RESTAURANT): PlaceType.RESTAURANT,
+                                                     (POIType.PUB)       : PlaceType.BAR]
 
   @Override
   @Cacheable("pois")
@@ -55,6 +56,7 @@ public class GooglePlacesPOIFinder implements POIFinder {
             phoneNumber = placeDetails.formattedPhoneNumber
             imageUrl = extractPhotoUrl(place)
             website = extractWebsite(placeDetails)
+            openingTimes = placeDetails.openingHours?.weekdayText
             it
           }
       }

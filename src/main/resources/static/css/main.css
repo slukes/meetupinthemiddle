@@ -99,6 +99,23 @@ hr {
     display: inline-block
 }
 
+.info-window-element-wrapper{
+    display:block;
+}
+
+.info-window-element{
+    display:inline;
+    margin-right:2px;
+}
+
+.info-window-links {
+    display: inline-block
+}
+
+.opening-times {
+    display: none;
+}
+
 /*non - mobile*/
 @media screen and (min-width: 760px) {
     #overlay {

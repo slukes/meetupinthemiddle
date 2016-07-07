@@ -88,8 +88,8 @@ $(document).ready(function () {
         return;
       }
 
-      var name = newName.val();
-      var location = newFrom.val();
+      var name = $.trim(newName.val());
+      var location = $.trim(newFrom.val());
       var mode = newMode.val();
       //How to display it to the user
       var prettyMode = newMode.find("option[value=" + mode + "]").text();
@@ -130,7 +130,7 @@ $(document).ready(function () {
      */
     $("body").on("click", ".removePerson", function (e) {
       var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
-      people[idToRemove].remove();
+      people[idToRemove].person.remove();
 
       //Get rid of the row in the table
       $(this).closest("tr").remove();
@@ -264,51 +264,15 @@ $(document).ready(function () {
         });
 
         infowindows.push(infowindow);
-
         addPoiMarkerEventHandler(marker, infowindow);
 
         poiMarkers.push(marker);
         bounds.extend(marker.getPosition());
         centreMap();
-        bounceOverlay();
       }
 
-      //If we click on a POI table row, simulate a click on the coresponding marker
-      $("#poiTable").find("tr").click(function () {
-        peelBackOverlay();
-        google.maps.event.trigger(poiMarkers[$(this).index()], 'click');
-      });
-
-      //If the user clicks to meetupagain, grab the original contents of
-      // of the overlay and put it back.  This is a hack to get round
-      // having to reload the whole map which is slow if we just made the button an anchor
-      // of "/"
-      $("#searchAgain").click(function (e) {
-        //Switch the HTML
-        $("#overlayContent").html(searchOverlayContent);
-        //Ditch any errors we had the first time
-        errorSection.hide();
-        errorSection.empty();
-
-        //Empty the current state of the app
-        for (id in people) {
-          people[id].person.remove();
-        }
-
-        infowindows.length = 0;
-
-        poiMarkers.forEach(function(){
-          this.setMap(null);
-        });
-
-        poiMarkers.length = 0;
-        centreMap();
-
-        //Finally, now its safe put back the event handlers
-        initAutocomplete();
-        addHomePageEventHandlers();
-        e.preventDefault();
-      })
+      addSerpEventHandlers();
+      bounceOverlay();
     });
 
     //If there was an error, the overlay won't have changed,
@@ -336,6 +300,51 @@ $(document).ready(function () {
       map.setCenter(marker.position);
       map.setZoom(15);
       infowindow.open(map, marker);
+    });
+  }
+
+  function addSerpEventHandlers() {
+    //If we click on a POI table row, simulate a click on the coresponding marker
+    $("#poiTable").find("tr").click(function () {
+      peelBackOverlay();
+      google.maps.event.trigger(poiMarkers[$(this).index()], 'click');
+    });
+
+    //If the user clicks to meetupagain, grab the original contents of
+    // of the overlay and put it back.  This is a hack to get round
+    // having to reload the whole map which is slow if we just made the button an anchor
+    // of "/"
+    $("#searchAgain").click(function (e) {
+      //Switch the HTML
+      $("#overlayContent").html(searchOverlayContent);
+      //Ditch any errors we had the first time
+      $("#error-section").hide();
+      $("#error-section").empty();
+
+      //Empty the current state of the app
+      for (id in people) {
+        people[id].person.remove();
+      }
+
+      infowindows.length = 0;
+
+      poiMarkers.forEach(function () {
+        this.setMap(null);
+      });
+
+      poiMarkers.length = 0;
+      centreMap();
+
+      //Finally, now its safe put back the event handlers
+      initAutocomplete();
+      addHomePageEventHandlers();
+      e.preventDefault();
+    });
+
+    //Info windows, these have to use event delegation, since they are not on the dom
+    //Until the window is displayed
+    $("body").on("click", ".opening-hours-glyph", function () {
+      $(this).parents().find(".opening-times").toggle()
     });
   }
 
@@ -389,6 +398,8 @@ $(document).ready(function () {
   //Visual clue to users that you can peel back
   function bounceOverlay() {
     if (isMobile) {
+      overlay.animate({left: -10}, "fast");
+      overlay.animate({left: 0}, "fast");
       overlay.animate({left: -10}, "fast");
       overlay.animate({left: 0}, "fast");
     }
