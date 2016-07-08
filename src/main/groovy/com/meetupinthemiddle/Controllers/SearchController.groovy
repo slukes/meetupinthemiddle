@@ -39,6 +39,7 @@ class SearchController {
     if (bindingResult.hasErrors()) {
       throw new InvalidBodyException(bindingResult.fieldErrors)
     }
+
     def response = meetUpFacade.doSearch(request)
 
     def ctx = new Context()

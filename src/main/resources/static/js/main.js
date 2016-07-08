@@ -265,9 +265,11 @@ function initAutocomplete() {
        * If something went wrong, tell the user I'm sorry!
        */
       req.done(function (data) {
-        $("#submitButton").button("reset");
-        $searchOverlayContent.hide();
-        $overlay.prepend(data.html);
+        //TODO - fix this
+        //$("#submitButton").button("reset");
+        //$searchOverlayContent.hide();
+        //$overlay.prepend(data.html);
+        $searchOverlayContent.html(data.html);
         for (var i = 0; i < data.pois.length; i++) {
           var latLng = data.pois[i].latLong;
           var marker = new google.maps.Marker({
@@ -293,9 +295,10 @@ function initAutocomplete() {
 
           poiMarkers.push(marker);
           bounds.extend(marker.getPosition());
-          centreMap();
-          bounceOverlay();
         }
+
+        centreMap();
+        bounceOverlay();
 
         //If we click on a POI table row, simulate a click on the coresponding marker
         $("#poiTable").find("tr").click(function () {
@@ -307,35 +310,35 @@ function initAutocomplete() {
         // of the overlay and put it back.  This is a hack to get round
         // having to reload the whole map which is slow if we just made the button an anchor
         // of "/"
-        $("#searchAgain").click(function (e) {
-          //Ditch any errors we had the first time
-          $errorSection.hide();
-          $errorSection.empty();
-
-          //Empty the current state of the app
-          for (var id in people) {
-            people[id].person.remove();
-          }
-
-          $peopleTable.empty();
-
-          infowindows.length = 0;
-          for (var marker in poiMarkers) {
-            poiMarkers[marker].setMap(null);
-          }
-          poiMarkers.length = 0;
-          centreMap();
-
-          resetOverlay();
-
-          //Switch the HTML
-          var $resultsOverlayContent = $("#resultsOverlayContent");
-          $resultsOverlayContent.fadeOut();
-          $resultsOverlayContent.remove();
-          $searchOverlayContent.fadeIn();
-
-          e.preventDefault();
-        });
+        //$("#searchAgain").click(function (e) {
+        //  //Ditch any errors we had the first time
+        //  $errorSection.hide();
+        //  $errorSection.empty();
+        //
+        //  //Empty the current state of the app
+        //  for (var id in people) {
+        //    people[id].person.remove();
+        //  }
+        //
+        //  $peopleTable.empty();
+        //
+        //  infowindows.length = 0;
+        //  for (var marker in poiMarkers) {
+        //    poiMarkers[marker].setMap(null);
+        //  }
+        //  poiMarkers.length = 0;
+        //  centreMap();
+        //
+        //  resetOverlay();
+        //
+        //  //Switch the HTML
+        //  var $resultsOverlayContent = $("#resultsOverlayContent");
+        //  $resultsOverlayContent.fadeOut();
+        //  $resultsOverlayContent.remove();
+        //  $searchOverlayContent.fadeIn();
+        //
+        //  e.preventDefault();
+        //});
 
         //Info windows, these have to use event delegation, since they are not on the dom
         //Until the window is displayed
@@ -389,7 +392,7 @@ function initAutocomplete() {
     if (settings.isMobile) {
       $grip.on("touchmove", function (e) {
         var x = e.originalEvent.changedTouches[0].clientX;
-        overlay.css('left', x - $(window).width() + 'px');
+        $overlay.css('left', x - $(window).width() + 'px');
         e.preventDefault();
       });
 

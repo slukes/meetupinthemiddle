@@ -5,5 +5,5 @@ import org.springframework.validation.FieldError
 
 @TupleConstructor
 class InvalidBodyException extends RuntimeException{
-  List<FieldError> fieldError;
+  List<FieldError> fieldError
 }

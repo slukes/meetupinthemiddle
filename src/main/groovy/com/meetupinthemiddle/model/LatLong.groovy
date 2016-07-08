@@ -10,9 +10,4 @@ import groovy.transform.TupleConstructor
 class LatLong {
   double lat;
   double lng;
-
-  static LatLong fromString(final String latLongString) {
-    def arr = latLongString.split(",")
-    new LatLong(Double.parseDouble(arr[0]), Double.parseDouble(arr[1]))
-  }
 }

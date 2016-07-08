@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.controllers
+
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -9,16 +10,6 @@ class MainController {
   @RequestMapping("/")
   String index() {
     "index"
-  }
-
-  @RequestMapping("/contact")
-  String contact() {
-    "contact"
-  }
-
-  @RequestMapping("/terms")
-  String terms() {
-    "terms"
   }
 
   //If we don't have what is being asked for, show the home page

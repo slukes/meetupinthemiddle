@@ -1,5 +1,8 @@
 package com.meetupinthemiddle.model
 
+import groovy.transform.builder.Builder
+
+@Builder
 class POI {
   String name
   String address
