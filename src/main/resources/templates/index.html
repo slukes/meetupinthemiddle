@@ -5,18 +5,17 @@
 <header th:replace="fragments/layout :: header"></header>
 <section id="overlay">
     <span id="grip"></span>
-    <section id="overlayContent">
-        <!--TODO put instructions here.-->
+    <section id="searchoverlayContent" class="overlayContent">
         <section class="glyphSpace">
             <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true"
                   data-toggle="tooltip" data-placement="bottom"
                   title="Detailed instructions regarding how the page should be used will be included here."></span>
         </section>
-
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
             <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"></span>
-            <th:block th:text="'Ooops! We don\'t know about a page called ' + ${errornotfound}.">></th:block>
+            <th:block th:if="${errornotfound != null}"
+                      th:text="'Ooops! We dont know about a page called ' + ${errornotfound}."></th:block>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
@@ -47,4 +46,5 @@
 <section class="" id="map"></section>
 <footer th:replace="fragments/layout :: footer"></footer>
 </body>
+<th:block th:replace="fragments/mustache :: templates"/>
 </html>
