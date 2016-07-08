@@ -59,7 +59,7 @@ class AllMidPointFinder extends AbstractMidpointFinder {
     def min = new LatLong(Double.MAX_VALUE, Double.MAX_VALUE)
     def max = new LatLong(Double.MIN_VALUE, Double.MIN_VALUE)
 
-    people.forEach(
+    people.each
         {
           if (min.lat == 0 || it.latLong.lat < min.lat) {
             min.lat = it.latLong.lat
@@ -77,7 +77,6 @@ class AllMidPointFinder extends AbstractMidpointFinder {
             max.lng = it.latLong.lng
           }
         }
-    )
 
     new Tuple2<LatLong, LatLong>(min, max)
   }
