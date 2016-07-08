@@ -1,4 +1,4 @@
-//We have to polute the global scope here or else the call back from google maps
+//We have to pollute the global scope here or else the call back from google maps
 //doesn't work
 var map,
   bounds,
@@ -325,7 +325,7 @@ function initAutocomplete() {
           $peopleTable.empty();
 
           infowindows.length = 0;
-          for(var marker in poiMarkers){
+          for (var marker in poiMarkers) {
             poiMarkers[marker].setMap(null);
           }
           poiMarkers.length = 0;
@@ -418,6 +418,8 @@ function initAutocomplete() {
     //Visual clue to users that you can peel back
     function bounceOverlay() {
       if (settings.isMobile) {
+        $overlay.animate({left: -10}, "fast");
+        $overlay.animate({left: 0}, "fast");
         $overlay.animate({left: -10}, "fast");
         $overlay.animate({left: 0}, "fast");
       }
