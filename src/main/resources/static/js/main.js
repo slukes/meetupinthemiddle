@@ -308,11 +308,6 @@ function initAutocomplete() {
         // having to reload the whole map which is slow if we just made the button an anchor
         // of "/"
         $("#searchAgain").click(function (e) {
-          //Switch the HTML
-          var $resultsOverlayContent = $("#resultsOverlayContent");
-          $resultsOverlayContent.fadeOut();
-          $resultsOverlayContent.remove();
-          $searchOverlayContent.fadeIn();
           //Ditch any errors we had the first time
           $errorSection.hide();
           $errorSection.empty();
@@ -330,6 +325,14 @@ function initAutocomplete() {
           }
           poiMarkers.length = 0;
           centreMap();
+
+          resetOverlay();
+
+          //Switch the HTML
+          var $resultsOverlayContent = $("#resultsOverlayContent");
+          $resultsOverlayContent.fadeOut();
+          $resultsOverlayContent.remove();
+          $searchOverlayContent.fadeIn();
 
           e.preventDefault();
         });
