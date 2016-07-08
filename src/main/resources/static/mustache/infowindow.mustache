@@ -4,8 +4,10 @@
         <h4>{{name}}</h4>
     </section>
     <section>
-        {{#address}}<span class="info-window-element-wrapper"><span class="glyphicon glyphicon-home info-window-element"></span> {{address}}</span>{{/address}}
-        {{#phoneNumber}}<span class="info-window-element-wrapper"><span class="glyphicon glyphicon-phone info-window-element"></span> {{phoneNumber}}</span>{{/phoneNumber}}
+        {{#address}}<span class="info-window-element-wrapper"><span
+                class="glyphicon glyphicon-home info-window-element"></span> {{address}}</span>{{/address}}
+        {{#phoneNumber}}<span class="info-window-element-wrapper"><span
+                class="glyphicon glyphicon-phone info-window-element"></span> {{phoneNumber}}</span>{{/phoneNumber}}
     </section>
 
     <section class="info-window-links">
@@ -14,12 +16,12 @@
     </section>
 
     {{#openingTimes.length}}
-    <section class="opening-times">
-        <ul>
-            {{#openingTimes}}
-            <li>{{.}}</li>
-            {{/openingTimes}}
-        </ul>
-    </section>
+        <section class="opening-times">
+            <ul>
+                {{#openingTimes}}
+                    <li>{{.}}</li>
+                {{/openingTimes}}
+            </ul>
+        </section>
     {{/openingTimes.length}}
 </section>

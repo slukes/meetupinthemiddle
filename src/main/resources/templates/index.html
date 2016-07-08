@@ -15,8 +15,8 @@
 
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
-            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"
-                  th:text="'Sorry, we don\'t know about a page called ' + ${errornotfound}"></span>
+            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"></span>
+            <th:block th:text="'Ooops! We don\'t know about a page called ' + ${errornotfound}.">></th:block>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
@@ -42,9 +42,7 @@
             </button>
         </form>
     </section>
-
     <section id="share" th:replace="fragments/social :: share"></section>
-</section>
 </section>
 <section class="" id="map"></section>
 <footer th:replace="fragments/layout :: footer"></footer>

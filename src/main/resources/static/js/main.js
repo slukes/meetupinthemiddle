@@ -28,17 +28,17 @@ var errorMessages = {
  */
 
 var infoWindowTemplate;
-$.get("mustache/infowindow.html", function (template) {
+$.get("mustache/infowindow.mustache", function (template) {
   infoWindowTemplate = template;
 });
 
 var tableRowTemplate;
-$.get("mustache/personTableRow.html", function (template) {
+$.get("mustache/personTableRow.mustache", function (template) {
   tableRowTemplate = template;
 });
 
 var errorTemplate, autocomplete;
-$.get("mustache/error.html", function (template) {
+$.get("mustache/error.mustache", function (template) {
   errorTemplate = template;
 });
 
