@@ -21,7 +21,22 @@ class Stubs {
      , Person.builder()
          .withName("George")
          .withFrom("Woking")
+         .withLatLong(new LatLong(125.1, 237.2))
+         .withTransportMode(TransportMode.DRIVING)
+         .build()]
+  }
+
+  static twoPeopleBothDriving() {
+    [Person.builder()
+         .withName("Sam")
+         .withFrom("Reading")
+         .withTransportMode(TransportMode.DRIVING)
          .withLatLong(new LatLong(123.1, 234.2))
+         .build()
+     , Person.builder()
+         .withName("George")
+         .withFrom("Woking")
+         .withLatLong(new LatLong(124.1, 235.2))
          .withTransportMode(TransportMode.DRIVING)
          .build()]
   }

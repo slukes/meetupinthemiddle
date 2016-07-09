@@ -44,12 +44,12 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
     def i = 0
     while (i < destLength - 1) {
       def batchSize = destLength - i >= MAX_PER_REQ ? MAX_PER_REQ : destLength % 25
-      LatLng[] batch = gmDestinations[i .. i + batchSize - 1]
-      if(publicGmStarts.length > 0) {
+      LatLng[] batch = gmDestinations[i..i + batchSize - 1]
+      if (publicGmStarts.length > 0) {
         publicResults << new Tuple2<>(executor.submit { doBatch(publicGmStarts, batch, PUBLIC) }, batch)
       }
 
-      if(drivingGmStarts.length > 0) {
+      if (drivingGmStarts.length > 0) {
         drivingResults << new Tuple2<>(executor.submit { doBatch(drivingGmStarts, batch, DRIVING) }, batch)
       }
 
@@ -102,11 +102,11 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
     }
   }
 
-  private DistanceMatrix doGoogleMapsRequest(origins, points, mode) {
-    DistanceMatrixApi.newRequest(context)
-        .mode(mode)
-        .origins(origins)
-        .destinations(points)
-        .await()
+  private DistanceMatrix doGoogleMapsRequest(LatLng[] origins, LatLng[] points, TravelMode mode) {
+    def req = DistanceMatrixApi.newRequest(context)
+    req.mode(mode)
+    req.origins(origins)
+    req.destinations(points)
+    req.await()
   }
 }
