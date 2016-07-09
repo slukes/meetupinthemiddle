@@ -42,8 +42,6 @@ class AllMidPointFinder extends AbstractMidpointFinder {
 
     allTimes.keySet().forEach({
       def times = allTimes.get(it)
-      println("" + it + "" + times)
-      //times.size() == people.size() &&
       if (times.size() == people.size() && !times.contains(null)) {
         def maxDifference = times.max() - times.min()
         if (maxDifference < lowestSoFar) {
