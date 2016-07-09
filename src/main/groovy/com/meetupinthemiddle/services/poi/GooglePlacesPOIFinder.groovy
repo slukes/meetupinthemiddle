@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.services.poi
+
 import com.google.maps.GeoApiContext
 import com.google.maps.PlacesApi
 import com.google.maps.model.*
@@ -24,12 +25,12 @@ public class GooglePlacesPOIFinder implements POIFinder {
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
-  private static final def POI_PLACE_TYPE_MAPPING = [(RESTAURANT): PlaceType.RESTAURANT,
-                                                     (POIType.PUB)       : PlaceType.BAR]
+  private static final def POI_PLACE_TYPE_MAPPING = [(RESTAURANT) : PlaceType.RESTAURANT,
+                                                     (POIType.PUB): PlaceType.BAR]
 
   @Override
   @Cacheable("pois")
-  public POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
+  POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
     PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .type(POI_PLACE_TYPE_MAPPING[type])
         .rankby(RankBy.DISTANCE)

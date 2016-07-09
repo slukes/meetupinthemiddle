@@ -106,7 +106,15 @@
       <artifactId>powermock-mockito-release-full</artifactId>
       <version>1.6.4</version>
       <classifier>full</classifier>
+      <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4-rule</artifactId>
+      <version>1.6.5</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
