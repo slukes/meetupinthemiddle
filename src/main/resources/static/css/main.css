@@ -115,7 +115,7 @@ hr {
 /*non - mobile*/
 @media screen and (min-width: 760px) {
     #overlay {
-        width: 25%;
+        width: 30%;
     }
 
     h1 {

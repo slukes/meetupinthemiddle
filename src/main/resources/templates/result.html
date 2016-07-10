@@ -8,7 +8,7 @@
             <td><span class="personMarker glyphicon glyphicon-map-marker"></span></td>
             <td th:text="${person.name}"></td>
             <td th:text="${person.from}"></td>
-            <td th:text="${person.travelTime / 60 >= 1 ? hours : 0} + ':' + ${person.travelTime % 60}"></td>
+            <td th:text="${person.travelTime / 60 >= 1 ? person.travelTime / 60 : 0} + ':' + ${person.travelTime % 60}"></td>
         </tr>
         </tbody>
     </table>
