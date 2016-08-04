@@ -1,0 +1,26 @@
+{
+  "people": [
+    {
+      "name": "Sam",
+      "distance": 0.0,
+      "travelTime": 0,
+      "latLong": {
+        "lat": 123.1,
+        "lng": 234.2
+      },
+      "transportMode": "PUBLIC"
+    },
+    {
+      "name": "George",
+      "distance": 0.0,
+      "travelTime": 0,
+      "from": "Woking",
+      "latLong": {
+        "lat": 123.1,
+        "lng": 234.2
+      },
+      "transportMode": "DRIVING"
+    }
+  ],
+  "poiType": "MEETING"
+}
