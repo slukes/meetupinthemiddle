@@ -9,11 +9,16 @@
     <script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
     <script th:src="@{/webjars/mustachejs/2.2.1/mustache.min.js}"></script>
     <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/cookie.js}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&callback=initMap&v=3.24&libraries=places&region=gb"
             async defer></script>
 </head>
 
 <header th:fragment="header">
+    <section id="cookie-bar">
+        <p>By using MeetUpInTheMiddle you are consenting to our use of cookies to improve your experience.</p>
+        <span id="close-cookie-bar" class="glyphicon glyphicon-remove pull-right"></span>
+    </section>
     <div class="row">
         <!--TODO change image for actual logo-->
         <img id="logo" class="col-md-1" th:src="@{/img/imageSquare.jpg}" alt="Meet Up In The Middle Logo"/>
