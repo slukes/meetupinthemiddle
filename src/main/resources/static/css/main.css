@@ -1,11 +1,14 @@
-#cookie-bar {
-    display: none;
+.top-bar {
     width: 100%;
     height: 60px;
     padding: 10px 10px 10px 10px;
     background: rgba(242, 20, 20, 0.9);
     position: absolute;
     z-index: 1;
+}
+
+#cookie-bar{
+    display: none;
 }
 
 #close-cookie-bar {
