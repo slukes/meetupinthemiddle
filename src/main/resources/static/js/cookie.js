@@ -1,10 +1,13 @@
-$(function() {
+$(function () {
   $("#cookie-bar").on("click", "#close-cookie-bar", function () {
     setConsentCookie();
     $('#cookie-bar').hide();
   });
 
   getCookieConsent();
+
+  //TODO Move this somewhere else.
+  $("#mail-bar").delay(5000).fadeOut("fast");
 });
 
 function getCookieConsent() {

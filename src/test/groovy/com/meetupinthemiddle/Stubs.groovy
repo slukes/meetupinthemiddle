@@ -4,6 +4,8 @@ import com.google.maps.model.*
 import com.meetupinthemiddle.model.*
 import org.apache.commons.lang.math.RandomUtils
 
+import static org.apache.commons.lang.RandomStringUtils.random
+
 class Stubs {
   static aRequestObj() {
     def test = Request.builder()
@@ -131,5 +133,15 @@ class Stubs {
     resultOne.name = "A really cool place";
 
     return resultOne;
+  }
+
+  static ContactFormBean randomFormBean() {
+    ContactFormBean.builder()
+        .name(random(20))
+        .email("random@random.com")
+        .subject(random(20))
+        .message(random(2000))
+        .sendCopy(RandomUtils.nextBoolean())
+        .build()
   }
 }

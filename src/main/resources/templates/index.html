@@ -14,8 +14,7 @@
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
             <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"></span>
-            <th:block th:if="${errornotfound != null}"
-                      th:text="'Ooops! We dont know about a page called ' + ${errornotfound}."></th:block>
+            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span th:text="${errornotfound}">.</span></th:block>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
