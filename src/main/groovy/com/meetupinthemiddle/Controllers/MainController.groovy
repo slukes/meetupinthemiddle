@@ -18,4 +18,5 @@ class MainController {
     redirectAttributes.addFlashAttribute("errornotfound", page)
     "redirect:/"
   }
+
 }

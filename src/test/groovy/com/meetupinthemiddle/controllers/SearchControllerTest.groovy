@@ -8,7 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -24,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.not
 import static org.mockito.Matchers.any
 import static org.mockito.Mockito.when
+import static org.mockito.MockitoAnnotations.initMocks
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -31,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner)
 @ContextConfiguration(classes = MeetupinthemiddleApplication)
 class SearchControllerTest {
-  public static final String CONTROLLER_URL = "/search"
-  public static final String JSON_DIR = 'src/test/resources/modeljson'
+  static final String CONTROLLER_URL = "/search"
+  static final String JSON_DIR = 'src/test/resources/modeljson'
 
   @InjectMocks
   private SearchController searchController = new SearchController()
@@ -47,7 +47,7 @@ class SearchControllerTest {
 
   @Before
   void initMockMvc() {
-    MockitoAnnotations.initMocks(SearchControllerTest)
+    initMocks(SearchControllerTest)
     searchController.templateEngine = this.templateEngine
     mockMvc = MockMvcBuilders.standaloneSetup(searchController).build()
   }
@@ -102,10 +102,10 @@ class SearchControllerTest {
   }
 
   @Test
-  void testSuccess(){
+  void testSuccess() {
     //Given
     when(meetUpFacade.doSearch(any(Request)))
-      .thenReturn(aResponseObj())
+        .thenReturn(aResponseObj())
 
     //When / then
     mockMvc.perform(
@@ -117,7 +117,7 @@ class SearchControllerTest {
   }
 
   @Test
-  void testFail(){
+  void testFail() {
     //Given
     when(meetUpFacade.doSearch(any(Request)))
         .thenThrow(new RuntimeException())

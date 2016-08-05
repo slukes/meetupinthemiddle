@@ -16,7 +16,7 @@ class MeetUpFacadeImpl implements MeetUpFacade {
   MidpointFinder allMidpointFinder
 
   @Autowired
-  private POIFinder poiFinderService
+  private POIFinder poiFinderRouter
 
   @Autowired
   private JourneyTimesFinder journeyTimesFinder
@@ -29,7 +29,7 @@ class MeetUpFacadeImpl implements MeetUpFacade {
     setLatLongs(request.people)
     def midPointAndTimes = allMidpointFinder.findMidpoint(request.people as List<Person>)
     def midPoint = midPointAndTimes.getFirst()
-    def pois = poiFinderService.findPOIs(midPoint.latLong, 5, request.poiType)
+    def pois = poiFinderRouter.findPOIs(midPoint.latLong, 5, request.poiType)
 
     setTravelTimes(request.people, midPointAndTimes.second)
 

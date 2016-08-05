@@ -306,40 +306,6 @@ function initAutocomplete() {
           google.maps.event.trigger(poiMarkers[$(this).index()], 'click');
         });
 
-        //If the user clicks to meetupagain, grab the original contents of
-        // of the overlay and put it back.  This is a hack to get round
-        // having to reload the whole map which is slow if we just made the button an anchor
-        // of "/"
-        //$("#searchAgain").click(function (e) {
-        //  //Ditch any errors we had the first time
-        //  $errorSection.hide();
-        //  $errorSection.empty();
-        //
-        //  //Empty the current state of the app
-        //  for (var id in people) {
-        //    people[id].person.remove();
-        //  }
-        //
-        //  $peopleTable.empty();
-        //
-        //  infowindows.length = 0;
-        //  for (var marker in poiMarkers) {
-        //    poiMarkers[marker].setMap(null);
-        //  }
-        //  poiMarkers.length = 0;
-        //  centreMap();
-        //
-        //  resetOverlay();
-        //
-        //  //Switch the HTML
-        //  var $resultsOverlayContent = $("#resultsOverlayContent");
-        //  $resultsOverlayContent.fadeOut();
-        //  $resultsOverlayContent.remove();
-        //  $searchOverlayContent.fadeIn();
-        //
-        //  e.preventDefault();
-        //});
-
         //Info windows, these have to use event delegation, since they are not on the dom
         //Until the window is displayed
         $(document.body).on("click", ".opening-hours-glyph", function () {

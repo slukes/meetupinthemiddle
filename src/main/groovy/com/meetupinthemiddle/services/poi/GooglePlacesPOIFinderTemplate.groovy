@@ -1,41 +1,33 @@
 package com.meetupinthemiddle.services.poi
-
 import com.google.maps.GeoApiContext
 import com.google.maps.PlacesApi
-import com.google.maps.model.*
+import com.google.maps.model.LatLng
+import com.google.maps.model.Photo
+import com.google.maps.model.PlaceDetails
+import com.google.maps.model.PlacesSearchResult
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POI
 import com.meetupinthemiddle.model.POIType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.stereotype.Service
 
 import java.util.function.Function
 import java.util.stream.Collectors
 
-import static com.meetupinthemiddle.model.POIType.RESTAURANT
 import static java.util.Arrays.stream
 
-@Service
-public class GooglePlacesPOIFinder implements POIFinder {
+abstract class GooglePlacesPOIFinderTemplate implements POIFinder {
   @Autowired
-  private GeoApiContext context
+  protected GeoApiContext context
 
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
-  private static final def POI_PLACE_TYPE_MAPPING = [(RESTAURANT) : PlaceType.RESTAURANT,
-                                                     (POIType.PUB): PlaceType.BAR]
-
   @Override
   @Cacheable("pois")
   POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
-    PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
-        .type(POI_PLACE_TYPE_MAPPING[type])
-        .rankby(RankBy.DISTANCE)
-        .await()
-        .results
+    PlacesSearchResult[] googleResponse = doSearch(location, type)
 
     stream(googleResponse)
         .limit(numberToFind)
@@ -43,6 +35,8 @@ public class GooglePlacesPOIFinder implements POIFinder {
         .map(mapPlaceToPoiFunction)
         .collect(Collectors.toList())
   }
+
+  protected abstract PlacesSearchResult[] doSearch(LatLong location, POIType type)
 
   private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction =
       {
@@ -62,11 +56,11 @@ public class GooglePlacesPOIFinder implements POIFinder {
           }
       }
 
-  private String extractWebsite(PlaceDetails placeDetails) {
+  protected String extractWebsite(PlaceDetails placeDetails) {
     placeDetails.website?.toString()
   }
 
-  private String extractPhotoUrl(PlacesSearchResult place) {
+  protected String extractPhotoUrl(PlacesSearchResult place) {
     if (place.photos?.length > 0) {
       formatPhotoUrl(place.photos[0])
     } else {
@@ -74,16 +68,16 @@ public class GooglePlacesPOIFinder implements POIFinder {
     }
   }
 
-  private String formatPhotoUrl(final Photo photo) {
+  protected String formatPhotoUrl(final Photo photo) {
     return String.format(photoUrlFormat, photo.photoReference)
   }
 
 
-  private LatLng mapLatLongToGoogleModel(final LatLong location) {
+  protected LatLng mapLatLongToGoogleModel(location) {
     new LatLng(location.getLat(), location.getLng())
   }
 
-  private LatLong mapLatLngToMeetModel(final LatLng location) {
+  protected LatLong mapLatLngToMeetModel(location) {
     new LatLong(lat: location.lat, lng: location.lng)
   }
 }
