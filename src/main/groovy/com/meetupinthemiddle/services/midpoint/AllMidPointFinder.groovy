@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class AllMidPointFinder extends AbstractMidpointFinder {
+class AllMidPointFinder implements MidpointFinder {
   @Autowired
   PointFinder[] pointFinders
 
@@ -20,7 +20,6 @@ class AllMidPointFinder extends AbstractMidpointFinder {
   @Autowired
   Geocoder geocoder
 
-  @Override
   Tuple2<CentrePoint, Map<Person, Long>> findMidpoint(final List<Person> people) {
     def latlongs = getMinAndMaxLatLng(people)
     def points = []

@@ -22,7 +22,7 @@
 }
 
 #map {
-    height: 80%;
+    height: 76%;
     width: 99%;
 }
 
@@ -34,7 +34,7 @@ html, body {
 
 #overlay {
     position: absolute;
-    height: 80%;
+    height: 76%;
     z-index: 1;
     background: rgba(255, 255, 255, 0.8);
     padding: 5px 5px 5px 5px;
@@ -55,6 +55,10 @@ hr {
 
 footer {
     height: 7%;
+}
+
+.container{
+   height: 76%;
 }
 
 #logo {
