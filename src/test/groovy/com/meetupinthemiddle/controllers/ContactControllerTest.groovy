@@ -46,10 +46,10 @@ class ContactControllerTest {
   }
 
   @Test
-  void testInvalidHaveAttributesAddedToModel(){
+  void testInvalidHaveAttributesAddedToModel() {
     mockMvc.perform(post(CONTROLLER_URL)
         .contentType(APPLICATION_FORM_URLENCODED))
-        //No attributes set so expect complaints about being null
+    //No attributes set so expect complaints about being null
         .andExpect(status().is(200))
         .andExpect(model().attributeHasFieldErrorCode("contactBean", "email", "NotNull"))
         .andExpect(model().attributeHasFieldErrorCode("contactBean", "name", "NotNull"))
@@ -59,7 +59,7 @@ class ContactControllerTest {
   }
 
   @Test
-  void succesForwardsToHomePage(){
+  void succesForwardsToHomePage() {
     when(contactService.sendMessage(any(ContactFormBean)))
         .thenReturn(true)
 

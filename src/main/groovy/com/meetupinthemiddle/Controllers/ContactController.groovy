@@ -27,7 +27,6 @@ class ContactController {
 
   @RequestMapping(path = "contact", method = GET)
   String contact(Model model) {
-    //TODO why do I need to do this???  Should this not happen magically??
     model.addAttribute("contactBean", new ContactFormBean())
     "contact"
   }
@@ -47,12 +46,13 @@ class ContactController {
       redirectAttributes.addFlashAttribute("contact_success", true)
       "redirect:/"
     } else {
-      handleOtherError(model)
+      handleOtherError(null, model)
     }
   }
 
   @ExceptionHandler(Exception)
   String handleOtherError(Exception e, Model model) {
+    LOGGER.error("Error occured serving contact page. Form bean is ${model.asMap()?.get("contactBean")}", e)
     model.addAttribute("error", "UNKNOWN")
     "contact"
   }
