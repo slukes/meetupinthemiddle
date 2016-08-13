@@ -1,6 +1,6 @@
 <section xmlns:th="http://www.thymeleaf.org" id="resultsOverlayContent" class="overlayContent">
     <h2>The middle is</h2>
-    <strong><em th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong>
+    <span id="midpoint"><strong><em th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong></span>
 
     <table class="table" id="peopleTable">
         <tbody>

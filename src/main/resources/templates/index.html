@@ -13,8 +13,8 @@
         </section>
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
-            <span th:if="${errornotfound != null}" class="error-message glyphicon glyphicon-exclamation-sign"></span>
-            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span th:text="${errornotfound}">.</span></th:block>
+            <span th:if="${errornotfound != null}" class="glyphicon glyphicon-exclamation-sign"></span>
+            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span class="error-message" th:text="${errornotfound}">.</span></th:block>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
@@ -42,7 +42,7 @@
     </section>
     <section id="share" th:replace="fragments/social :: share"></section>
 </section>
-<section class="" id="map"></section>
+<section class="" id="map" th:attr="data-test=${isTest}"></section>
 <footer th:replace="fragments/layout :: footer"></footer>
 </body>
 <th:block th:replace="fragments/mustache :: templates"/>

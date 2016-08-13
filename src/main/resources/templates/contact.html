@@ -24,8 +24,8 @@
         <section id="error-section" class="alert alert-danger" th:if="${#fields.hasErrors('all')}"
                  role="alert">
             <th:block th:each="err : ${#fields.allErrors()}">
-                <span class="error-message glyphicon glyphicon-exclamation-sign"></span>
-                <span th:text="${err}"></span>
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="error-message" th:text="${err}"></span>
                 <br />
             </th:block>
         </section>

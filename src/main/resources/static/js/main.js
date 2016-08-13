@@ -56,7 +56,7 @@ function initAutocomplete() {
         MISSING_FROM: "Ooops!  We need to know where everyone is travelling from!",
         MISSING_OR_INVALID_POI_TYPE: "Ooops!  Please tell us what kind of place you are looking to meet at!",
         MISSING_OR_INVALID_TRANSPORT_MODE: "Ooops!  Please tell us how everyone is travelling in!",
-        UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations."
+        UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations.  Only locations in the UK are supported."
       },
       templates = {};
 
@@ -73,6 +73,8 @@ function initAutocomplete() {
       window.alert("An error occurred loading the page");
       return;
     }
+
+    var isTest = $("#map").data("test");
 
     var $searchOverlayContent = $("#searchoverlayContent"),
       $newPersonForm = $("#newPersonForm"),
@@ -115,8 +117,10 @@ function initAutocomplete() {
       //How to display it to the user
       var prettyMode = $newMode.find("option[value=" + mode + "]").text();
 
-      geocoder.geocode({"address": location}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
+      geocoder.geocode({
+        "address": location, "region": "GB", componentRestrictions: {country: 'UK'}
+      }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK && results[0].address_components.length > 1) { //Length of one is address of "UK" means it wasn't found.
           var latLng = results[0].geometry.location;
           new Person(name, location, latLng, mode, prettyMode);
 
@@ -127,6 +131,8 @@ function initAutocomplete() {
           if (personId >= 2) {
             $submitButton.prop("disabled", false);
           }
+
+          $newName.focus()
         } else {
           //TODO if the geo-coded location is not in the UK - give a sensible error.  This needs doing on the backend too.
           addError("UNKNOWN_LOCATION");
@@ -175,8 +181,9 @@ function initAutocomplete() {
         position: location,
         label: name,
         clickable: false,
-        map: map
-      });
+        map: map,
+        optimized: !isTest
+      }); //if optimized is false then we can see map pins in the dom
       bounds.extend(marker.getPosition());
       return marker;
     }
@@ -199,7 +206,7 @@ function initAutocomplete() {
       centreMap();
 
       personId += 1;
-      $peopleTable.append(Mustache.to_html(templates.tableRow, this));
+      $peopleTable.find("tbody").append(Mustache.to_html(templates.tableRow, this));
 
       this.remove = function () {
         people[this.id].marker.setMap(null);
