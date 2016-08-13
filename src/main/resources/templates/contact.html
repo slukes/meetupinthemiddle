@@ -21,13 +21,17 @@
     </p>
 
     <form th:action="@{/contact}" th:object="${contactBean}" method="POST">
-        <section id="error-section" class="alert alert-danger" th:if="${#fields.hasErrors('all')}"
+        <section id="error-section" class="alert alert-danger" th:if="${#fields.hasErrors('all') || error != null}"
                  role="alert">
             <th:block th:each="err : ${#fields.allErrors()}">
                 <span class="glyphicon glyphicon-exclamation-sign"></span>
                 <span class="error-message" th:text="${err}"></span>
                 <br />
             </th:block>
+
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="error-message" th:if="${error != null}">An error occured sending your message.  Please try again later.</span>
+                <br />
         </section>
 
         <section class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
