@@ -1,14 +1,11 @@
 package com.meetupinthemiddle.model
 
-import org.hamcrest.Matchers
 import org.junit.Test
 
 import javax.validation.Validation
 
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.hasSize
+import static org.hamcrest.Matchers.*
 import static org.junit.Assert.assertThat
-
 //Test probably not required, but first time I've used the validation
 // in anger, so wanted to test out!
 class ContactFormBeanTest {
@@ -31,7 +28,7 @@ class ContactFormBeanTest {
     def constraintViolations = validator.validate(bean).toList()
 
     assertThat(constraintViolations, hasSize(1))
-    assertThat(constraintViolations.first().message, Matchers.is(equalTo("INVALID_EMAIL")))
+    assertThat(constraintViolations.first().message, stringContainsInOrder(["email", "invalid"]))
 
   }
 
@@ -42,7 +39,7 @@ class ContactFormBeanTest {
     def constraintViolations = validator.validate(bean).toList()
 
     assertThat(constraintViolations, hasSize(1))
-    assertThat(constraintViolations.first().message, Matchers.is(equalTo("MISSING_MESSAGE")))
+    assertThat(constraintViolations.first().message, containsString("message"))
   }
 
   @Test
@@ -52,7 +49,7 @@ class ContactFormBeanTest {
     def constraintViolations = validator.validate(bean).toList()
 
     assertThat(constraintViolations, hasSize(1))
-    assertThat(constraintViolations.first().message, Matchers.is(equalTo("MISSING_SUBJECT")))
+    assertThat(constraintViolations.first().message, containsString("subject"))
   }
 
   @Test
@@ -62,7 +59,7 @@ class ContactFormBeanTest {
     def constraintViolations = validator.validate(bean).toList()
 
     assertThat(constraintViolations, hasSize(1))
-    assertThat(constraintViolations.first().message, Matchers.is(equalTo("MISSING_NAME")))
+    assertThat(constraintViolations.first().message, containsString("name"))
   }
 
   private aValidFormBean() {
