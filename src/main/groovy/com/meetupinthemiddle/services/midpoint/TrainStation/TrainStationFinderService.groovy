@@ -17,10 +17,9 @@ class TrainStationFinderService implements PointFinder {
 
   @Override
   List<LatLong> doFind(LatLong minLatLong, LatLong maxLatLong) {
-    trainStationDao.findStations(minLatLong, maxLatLong)
-//    reduceStationsToMaxSize(stations)
-//    stations.collect { it.latLong }
-    return null
+    def stations = trainStationDao.findStations(minLatLong, maxLatLong)
+    reduceStationsToMaxSize(stations)
+    stations.collect { it.latLong }
   }
 
   void doStuff(LatLong minLatLong, LatLong maxLatLong){
