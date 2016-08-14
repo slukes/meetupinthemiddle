@@ -54,24 +54,24 @@ class AllMidPointFinder implements MidpointFinder {
 
   private Tuple2<LatLong, LatLong> getMinAndMaxLatLng(final List<Person> people) {
     def min = new LatLong(Double.MAX_VALUE, Double.MAX_VALUE)
-    def max = new LatLong(Double.MIN_VALUE, Double.MIN_VALUE)
+    def max = new LatLong(-Double.MAX_VALUE, -Double.MAX_VALUE) //Double.MIN_VALUE is actually positive!
 
     people.each
         {
-          if (min.lat == 0 || it.latLong.lat < min.lat) {
+          if (it.latLong.lat < min.lat) {
             min.lat = it.latLong.lat
           }
 
-          if (min.lng == 0 || it.latLong.lng < min.lng) {
+          if (it.latLong.lng < min.lng) {
             min.lng = it.latLong.lng
           }
 
-          if (max.lat == 0 || it.latLong.lat > max.lat) {
+          if (it.latLong.lat > max.lat) {
             max.lat = it.latLong.lat
           }
 
-          if (max.lng == 0 || it.latLong.lng > max.lng) {
-            max.lng = it.latLong.lng
+          if (it.latLong.lng > max.lng) {
+            max.setLng(it.latLong.lng)
           }
         }
 

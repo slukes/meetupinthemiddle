@@ -105,11 +105,11 @@
       <artifactId>commons-lang</artifactId>
       <version>2.6</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.maps</groupId>
-      <artifactId>google-maps-services</artifactId>
-      <version>0.1.12</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>com.google.maps</groupId>-->
+      <!--<artifactId>google-maps-services-java</artifactId>-->
+      <!--<version>0.1.16-SNAPSHOT</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-mockito-release-full</artifactId>
