@@ -20,6 +20,9 @@ class AllMidPointFinder implements MidpointFinder {
   @Autowired
   Geocoder geocoder
 
+  @Autowired //Using class not interface since I want to swap later, with out confusing Spring
+  MinSumOfDifferenceCentrePicker centrePicker
+
   Tuple2<CentrePoint, Map<Person, Long>> findMidpoint(final List<Person> people) {
     def latlongs = getMinAndMaxLatLng(people)
     def points = []
@@ -29,27 +32,10 @@ class AllMidPointFinder implements MidpointFinder {
     }
 
     def journeyTimes = journeyTimesFinder.getJourneyTimes(people, points)
-    def centre = minSum(people, journeyTimes)
+    def centre = centrePicker.pickBestPoint(people, journeyTimes)
     def townAndPostCode = geocoder.reverseGeocode(centre.getFirst())
 
     buildResponse(centre, townAndPostCode, people)
-  }
-
-  private Tuple2<LatLong, List<Integer>> minSum(List<Person> people, Map<LatLong, List<Integer>> allTimes) {
-    def lowestSoFar = Integer.MAX_VALUE
-    def resultLatLng = null
-
-    allTimes.keySet().each({
-      def times = allTimes.get(it)
-      if (times.size() == people.size() && !times.contains(null)) {
-        def maxDifference = times.max() - times.min()
-        if (maxDifference < lowestSoFar) {
-          lowestSoFar = maxDifference
-          resultLatLng = it
-        }
-      }
-    })
-    new Tuple2<>(resultLatLng, allTimes.get(resultLatLng))
   }
 
   private Tuple2<LatLong, LatLong> getMinAndMaxLatLng(final List<Person> people) {
