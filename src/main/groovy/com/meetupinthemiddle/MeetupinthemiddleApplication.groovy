@@ -23,7 +23,6 @@ public class MeetupinthemiddleApplication {
   GeoApiContext geoApiContext(@Value('${google.maps.api.key}') String apiKey) {
     new GeoApiContext().setApiKey(apiKey)
         .setFailFastForDailyLimit(true)
-        .setQueryRateLimit(100)
-        .setRetryTimeout(5, SECONDS)
+        .setRetryTimeout(20, SECONDS) //Hope to not be hitting this - but Google's rate limit means we might.
   }
 }
