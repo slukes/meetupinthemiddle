@@ -7,7 +7,7 @@ import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POIType
 import org.springframework.stereotype.Service
 
-import static com.meetupinthemiddle.model.POIType.RESTAURANT
+import static POIType.RESTAURANT
 
 @Service
 public class GooglePlacesPOIFinderUsingTypes extends GooglePlacesPOIFinderTemplate {

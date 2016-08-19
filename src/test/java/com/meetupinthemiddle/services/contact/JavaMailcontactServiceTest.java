@@ -52,7 +52,6 @@ public class JavaMailcontactServiceTest {
     SimpleMailMessage messageSent = captor.getValue();
 
     assertThat(messageSent.getTo(), hasItemInArray(toEmail));
-    assertThat(messageSent.getFrom(), is(formBean.getEmail()));
     assertThat(messageSent.getSubject(), is(formBean.getSubject()));
     assertThat(messageSent.getText(), containsString(formBean.getMessage()));
   }
