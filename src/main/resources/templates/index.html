@@ -9,12 +9,13 @@
         <section class="glyphSpace">
             <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true"
                   data-toggle="tooltip" data-placement="bottom"
-                  title="Detailed instructions regarding how the page should be used will be included here."></span>
+                  title="Get started by entering the names, start locations and transport methods of each person you're meeting"></span>
         </section>
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
             <span th:if="${errornotfound != null}" class="glyphicon glyphicon-exclamation-sign"></span>
-            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span class="error-message" th:text="${errornotfound}">.</span></th:block>
+            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span
+                    class="error-message" th:text="${errornotfound}">.</span></th:block>
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
