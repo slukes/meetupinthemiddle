@@ -15,10 +15,9 @@ public class GooglePlacesPOIFinderUsingTypes extends GooglePlacesPOIFinderTempla
                                                      (POIType.PUB): PlaceType.BAR]
 
   protected PlacesSearchResult[] doSearch(LatLong location, POIType type) {
-    PlacesSearchResult[] googleResponse = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
+    PlacesSearchResult[] googleResponse = doCall(PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .type(POI_PLACE_TYPE_MAPPING[type])
-        .rankby(RankBy.DISTANCE)
-        .await()
+        .rankby(RankBy.DISTANCE))
         .results
     googleResponse
   }

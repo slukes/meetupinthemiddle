@@ -56,7 +56,8 @@ function initAutocomplete() {
         MISSING_FROM: "Ooops!  We need to know where everyone is travelling from!",
         MISSING_OR_INVALID_POI_TYPE: "Ooops!  Please tell us what kind of place you are looking to meet at!",
         MISSING_OR_INVALID_TRANSPORT_MODE: "Ooops!  Please tell us how everyone is travelling in!",
-        UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations.  Only locations in the UK are supported."
+        UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations.  Only locations in the UK are supported.",
+        OVER_QUOTA: "Ooops!  MeetUpInTheMiddle.com makes use of data from Google Maps, which they charge for.  In order to keep the site free we have to limit the number of requests per day.  Please come back after 8am to perform your search."
       },
       templates = {};
 

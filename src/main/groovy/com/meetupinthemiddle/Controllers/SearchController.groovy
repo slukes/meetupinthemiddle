@@ -2,6 +2,7 @@ package com.meetupinthemiddle.controllers
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
+import com.meetupinthemiddle.exceptions.OverQuotaException
 import com.meetupinthemiddle.model.ErrorResponse
 import com.meetupinthemiddle.model.Request
 import com.meetupinthemiddle.model.Response
@@ -9,7 +10,6 @@ import com.meetupinthemiddle.services.MeetUpFacade
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.stereotype.Controller
 import org.springframework.validation.BindingResult
@@ -20,8 +20,8 @@ import org.thymeleaf.context.Context
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
-import static ErrorResponse.ErrorReason.*
-import static org.springframework.http.HttpStatus.BAD_REQUEST
+import static com.meetupinthemiddle.model.ErrorResponse.ErrorReason.*
+import static org.springframework.http.HttpStatus.*
 import static org.springframework.web.bind.annotation.RequestMethod.POST
 
 @Controller
@@ -78,6 +78,8 @@ class SearchController {
     }
   }
 
+  //This deals with any dodgey AJAX requests with invalid enum constants - shouldn't really be used under normal operation
+  //However, if this controller later becomes part of a webservice to power an app, it could be hit during develop time.
   @ExceptionHandler(HttpMessageNotReadableException)
   @ResponseStatus(BAD_REQUEST)
   @ResponseBody
@@ -103,9 +105,19 @@ class SearchController {
     }
   }
 
+  @ExceptionHandler(OverQuotaException)
+  @ResponseBody
+  @ResponseStatus(SERVICE_UNAVAILABLE)
+  ErrorResponse handleOverQuota(Exception e) {
+    new ErrorResponse().with {
+      addReason(OVER_QUOTA)
+      it
+    }
+  }
+
   @ExceptionHandler
   @ResponseBody
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseStatus(INTERNAL_SERVER_ERROR)
   ErrorResponse handleUnknownError(Exception e, HttpServletRequest req) {
     LOGGER.error("Error serving $req.requestURI", e)
     new ErrorResponse().with {

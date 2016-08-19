@@ -1,13 +1,12 @@
 package com.meetupinthemiddle.services.poi
+
 import com.google.maps.GeoApiContext
-import com.google.maps.PlacesApi
-import com.google.maps.model.LatLng
-import com.google.maps.model.Photo
-import com.google.maps.model.PlaceDetails
-import com.google.maps.model.PlacesSearchResult
+import com.google.maps.NearbySearchRequest
+import com.google.maps.model.*
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POI
 import com.meetupinthemiddle.model.POIType
+import com.meetupinthemiddle.services.AbstractGoogleMapsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -17,9 +16,12 @@ import java.util.stream.Collectors
 
 import static java.util.Arrays.stream
 
-abstract class GooglePlacesPOIFinderTemplate implements POIFinder {
+abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<PlacesSearchResponse, NearbySearchRequest> implements POIFinder {
   @Autowired
   protected GeoApiContext context
+
+  @Autowired
+  protected GooglePlacesDetailsFinder detailsFinder
 
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
@@ -41,7 +43,7 @@ abstract class GooglePlacesPOIFinderTemplate implements POIFinder {
   private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction =
       {
         place ->
-          PlaceDetails placeDetails = PlacesApi.placeDetails(context, place.placeId).await()
+          PlaceDetails placeDetails = owner.detailsFinder.getDetails(place)
 
           new POI().with {
             name = place.name

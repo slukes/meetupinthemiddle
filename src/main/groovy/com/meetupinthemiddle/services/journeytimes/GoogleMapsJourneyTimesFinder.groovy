@@ -1,32 +1,27 @@
 package com.meetupinthemiddle.services.journeytimes
 
-import com.google.maps.DistanceMatrixApi
-import com.google.maps.GeoApiContext
+import com.google.maps.DistanceMatrixApiRequest
 import com.google.maps.model.DistanceMatrix
 import com.google.maps.model.LatLng
 import com.google.maps.model.TravelMode
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.Person
-import org.springframework.beans.factory.annotation.Autowired
+import com.meetupinthemiddle.services.AbstractConcurrentGoogleMapsService
 import org.springframework.stereotype.Service
 
-import java.util.concurrent.ExecutorCompletionService
-import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
+import static com.google.maps.DistanceMatrixApi.newRequest
 import static com.google.maps.model.TravelMode.TRANSIT
 import static com.meetupinthemiddle.model.TransportMode.DRIVING
 import static com.meetupinthemiddle.model.TransportMode.PUBLIC
 
 @Service
-class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
+class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<DistanceMatrix, DistanceMatrixApiRequest> implements JourneyTimesFinder {
   private static final int MAX_PER_REQ = 25
-  @Autowired
-  GeoApiContext context
 
   private static final def TRANSPORT_MODE_TO_GOOGLE_MODEL =
       [(DRIVING): TravelMode.DRIVING, (PUBLIC): TRANSIT]
-
-  private ExecutorCompletionService<DistanceMatrix> executor = new ExecutorCompletionService<>(Executors.newCachedThreadPool())
 
   @Override
   Map<LatLong, List<Integer>> getJourneyTimes(List<Person> people, List<LatLong> points) {
@@ -46,16 +41,16 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
       def batchSize = destLength - i >= MAX_PER_REQ ? MAX_PER_REQ : destLength % 25
       LatLng[] batch = gmDestinations[i..i + batchSize - 1]
       if (publicGmStarts.length > 0) {
-        publicResults << new Tuple2<>(executor.submit { doBatch(publicGmStarts, batch, PUBLIC) }, batch)
+
+        publicResults << new Tuple2<>(doBatch(publicGmStarts, batch, PUBLIC), batch)
       }
 
       if (drivingGmStarts.length > 0) {
-        drivingResults << new Tuple2<>(executor.submit { doBatch(drivingGmStarts, batch, DRIVING) }, batch)
+        drivingResults << new Tuple2<>(doBatch(drivingGmStarts, batch, DRIVING), batch)
       }
 
       i += 25
     }
-
 
     publicResults.each {
       addResults(publicPeople, it.getFirst().get(), it.getSecond(), result)
@@ -102,11 +97,12 @@ class GoogleMapsJourneyTimesFinder implements JourneyTimesFinder {
     }
   }
 
-  private DistanceMatrix doGoogleMapsRequest(LatLng[] origins, LatLng[] points, TravelMode mode) {
-    def req = DistanceMatrixApi.newRequest(context)
-    req.mode(mode)
-    req.origins(origins)
-    req.destinations(points)
-    req.await()
+  private Future<DistanceMatrix> doGoogleMapsRequest(LatLng[] origins, LatLng[] points, TravelMode mode) {
+    doCall(
+        newRequest(context)
+            .mode(mode)
+            .origins(origins)
+            .destinations(points)
+    )
   }
 }

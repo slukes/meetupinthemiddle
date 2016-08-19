@@ -2,25 +2,27 @@ package com.meetupinthemiddle.services.geocode
 
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
+import com.google.maps.GeocodingApiRequest
 import com.google.maps.model.AddressComponent
 import com.google.maps.model.AddressComponentType
 import com.google.maps.model.GeocodingResult
 import com.google.maps.model.LatLng
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.TownAndPostcode
+import com.meetupinthemiddle.services.AbstractGoogleMapsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
-class GoogleMapsGeocoder implements Geocoder {
+class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult, GeocodingApiRequest> implements Geocoder {
   @Autowired
   private GeoApiContext context
 
   @Override
   @Cacheable("geocodes")
   LatLong geocode(final String location) {
-    def resp = GeocodingApi.geocode(context, location).await()
+    def resp = doCall(GeocodingApi.geocode(context, location))
     if (resp.length > 0) {
       def result = Arrays.<GeocodingResult> stream(resp)
           .filter({
@@ -35,7 +37,7 @@ class GoogleMapsGeocoder implements Geocoder {
   @Override
   @Cacheable("reverse-geocodes")
   TownAndPostcode reverseGeocode(LatLong latLong) {
-    def resp = GeocodingApi.reverseGeocode(context, new LatLng(latLong.lat, latLong.lng)).await()
+    def resp = doCall(GeocodingApi.reverseGeocode(context, new LatLng(latLong.lat, latLong.lng)))
     new TownAndPostcode(findTown(resp), findPostCode(resp))
   }
 

@@ -7,7 +7,8 @@ class ErrorResponse {
     MISSING_FROM,
     MISSING_OR_INVALID_POI_TYPE,
     MISSING_OR_INVALID_TRANSPORT_MODE,
-    UNKNOWN
+    UNKNOWN,
+    OVER_QUOTA
   }
   List<ErrorReason> errorReasons = []
 
