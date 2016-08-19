@@ -1,5 +1,6 @@
 package com.meetupinthemiddle.services.midpoint.trainStation;
 
+import com.meetupinthemiddle.model.BoundingBox;
 import com.meetupinthemiddle.model.LatLong;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Ignore;
@@ -7,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import static com.meetupinthemiddle.services.midpoint.trainStation.TrainStationD
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,11 +39,11 @@ public class TrainStationFinderTest {
       stations.add(randomTrainStation(RandomUtils.nextBoolean(), RandomUtils.nextBoolean(), SMALL));
     }
 
-    when(trainStationDao.findStations(Mockito.any(LatLong.class), Mockito.any(LatLong.class)))
+    when(trainStationDao.findStations(any(BoundingBox.class)))
         .thenReturn(stations);
 
     //When
-    List<LatLong> result = trainStationFinderService.doFind(new LatLong(1, 2), new LatLong(1, 2));
+    List<LatLong> result = trainStationFinderService.doFind(new BoundingBox(new LatLong(1, 2), new LatLong(1, 2)));
 
     //Then
     assertThat(result, hasSize(20));
@@ -61,11 +62,11 @@ public class TrainStationFinderTest {
       stations.add(randomTrainStation(false, false, SMALL));
     }
 
-    when(trainStationDao.findStations(Mockito.any(LatLong.class), Mockito.any(LatLong.class)))
+    when(trainStationDao.findStations(any(BoundingBox.class)))
         .thenReturn(stations);
 
     //When
-    List<LatLong> result = trainStationFinderService.doFind(new LatLong(1, 2), new LatLong(1, 2));
+    List<LatLong> result = trainStationFinderService.doFind(new BoundingBox(new LatLong(1, 2), new LatLong(1, 2)));
 
     //Then
     assertThat(result, hasSize(150));
@@ -89,11 +90,11 @@ public class TrainStationFinderTest {
       stations.add(randomTrainStation(false, RandomUtils.nextBoolean(), SMALL));
     }
 
-    when(trainStationDao.findStations(Mockito.any(LatLong.class), Mockito.any(LatLong.class)))
+    when(trainStationDao.findStations(any(BoundingBox.class)))
         .thenReturn(stations);
 
     //When
-    List<LatLong> result = trainStationFinderService.doFind(new LatLong(1, 2), new LatLong(1, 2));
+    List<LatLong> result = trainStationFinderService.doFind(new BoundingBox(new LatLong(1, 2), new LatLong(1, 2)));
 
     //Then
     assertThat(result, hasSize(20));
@@ -121,11 +122,11 @@ public class TrainStationFinderTest {
       stations.add(randomTrainStation(false, RandomUtils.nextBoolean(), SMALL));
     }
 
-    when(trainStationDao.findStations(Mockito.any(LatLong.class), Mockito.any(LatLong.class)))
+    when(trainStationDao.findStations(any(BoundingBox.class)))
         .thenReturn(stations);
 
     //When
-    List<LatLong> result = trainStationFinderService.doFind(new LatLong(1, 2), new LatLong(1, 2));
+    List<LatLong> result = trainStationFinderService.doFind(new BoundingBox(new LatLong(1, 2), new LatLong(1, 2)));
 
     //Then
     assertThat(result, hasSize(160));
@@ -157,11 +158,11 @@ public class TrainStationFinderTest {
       stations.add(randomTrainStation(false, RandomUtils.nextBoolean(), SMALL));
     }
 
-    when(trainStationDao.findStations(Mockito.any(LatLong.class), Mockito.any(LatLong.class)))
+    when(trainStationDao.findStations(any(BoundingBox.class)))
         .thenReturn(stations);
 
     //When
-    List<LatLong> result = trainStationFinderService.doFind(new LatLong(1, 2), new LatLong(1, 2));
+    List<LatLong> result = trainStationFinderService.doFind(new BoundingBox(new LatLong(1, 2), new LatLong(1, 2)));
 
     //Then
     assertThat(result, hasSize(160));

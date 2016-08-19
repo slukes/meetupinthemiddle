@@ -20,7 +20,7 @@ import org.thymeleaf.context.Context
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
-import static com.meetupinthemiddle.model.ErrorResponse.ErrorReason.*
+import static ErrorResponse.ErrorReason.*
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 import static org.springframework.web.bind.annotation.RequestMethod.POST
 

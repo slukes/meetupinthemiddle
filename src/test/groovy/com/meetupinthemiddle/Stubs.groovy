@@ -2,6 +2,14 @@ package com.meetupinthemiddle
 
 import com.google.maps.model.*
 import com.meetupinthemiddle.model.*
+import com.meetupinthemiddle.model.CentrePoint
+import com.meetupinthemiddle.model.ContactFormBean
+import com.meetupinthemiddle.model.LatLong
+import com.meetupinthemiddle.model.POI
+import com.meetupinthemiddle.model.POIType
+import com.meetupinthemiddle.model.Person
+import com.meetupinthemiddle.model.Request
+import com.meetupinthemiddle.model.Response
 import org.apache.commons.lang.math.RandomUtils
 
 import static org.apache.commons.lang.RandomStringUtils.random

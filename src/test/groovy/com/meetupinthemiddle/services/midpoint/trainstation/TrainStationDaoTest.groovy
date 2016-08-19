@@ -1,5 +1,6 @@
 package com.meetupinthemiddle.services.midpoint.trainStation
 import com.meetupinthemiddle.MeetupinthemiddleApplication
+import com.meetupinthemiddle.model.BoundingBox
 import com.meetupinthemiddle.model.LatLong
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,23 +24,23 @@ class TrainStationDaoTest {
   @Test
   void testBoundary(){
     //LatLong for woking station
-    def result = trainStationDao.findStations(new LatLong(51.31846765018483,-0.5569596839599814),
-        new LatLong(51.31846765018483,-0.5569596839599814))
+    def result = trainStationDao.findStations(new BoundingBox(new LatLong(51.31846765018483,-0.5569596839599814),
+        new LatLong(51.31846765018483,-0.5569596839599814)))
     assertThat(result, hasSize(1))
   }
 
   @Test
   void testArea(){
     //LatLong for Woking station and Guildford station expecting Woking, Guildford and Guildford London Road
-    def result = trainStationDao.findStations(new LatLong(51.23696848697492,-0.5569596839599814),
-        new LatLong(51.31846765018483,-0.5804250214773753))
+    def result = trainStationDao.findStations(new BoundingBox(new LatLong(51.23696848697492,-0.5569596839599814),
+        new LatLong(51.31846765018483,-0.5804250214773753)))
     assertThat(result, hasSize(3))
   }
 
   @Test
   void testNoResults(){
     //Mainly just concerned there would be no exceptions ...
-    def result = trainStationDao.findStations(new LatLong(0, 0), new LatLong(0,0))
+    def result = trainStationDao.findStations(new BoundingBox(new LatLong(0, 0), new LatLong(0,0)))
     assertThat(result, hasSize(0))
   }
 }

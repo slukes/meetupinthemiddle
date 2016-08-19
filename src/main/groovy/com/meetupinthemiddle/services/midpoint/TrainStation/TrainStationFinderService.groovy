@@ -1,4 +1,6 @@
 package com.meetupinthemiddle.services.midpoint.trainStation
+
+import com.meetupinthemiddle.model.BoundingBox
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,8 +16,8 @@ class TrainStationFinderService implements PointFinder {
   TrainStationDao trainStationDao
 
   @Override
-  List<LatLong> doFind(LatLong minLatLong, LatLong maxLatLong) {
-    def stations = trainStationDao.findStations(minLatLong, maxLatLong)
+  List<LatLong> doFind(BoundingBox boundingBox) {
+    def stations = trainStationDao.findStations(boundingBox)
     reduceStationsToMaxSize(stations)
     stations.collect { it.latLong }
   }
@@ -33,9 +35,5 @@ class TrainStationFinderService implements PointFinder {
     if (stations.size() > MAX_SIZE) {
       stations.removeAll { it.size == SMALL }
     }
-
-//    if (stations.size() > MAX_SIZE) {
-//      stations.removeAll { it.size == MEDIUM }
-//    }
   }
 }
