@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.PropertySource
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS
+import static java.util.concurrent.TimeUnit.SECONDS
 
 @SpringBootApplication
 @EnableCaching
@@ -22,6 +22,7 @@ public class MeetupinthemiddleApplication {
   @Bean
   GeoApiContext geoApiContext(@Value('${google.maps.api.key}') String apiKey) {
     new GeoApiContext().setApiKey(apiKey)
-        .setRetryTimeout(500, MILLISECONDS)
+        .setFailFastForDailyLimit(true)
+        .setRetryTimeout(20, SECONDS) //Hope to not be hitting this - but Google's rate limit means we might.
   }
 }

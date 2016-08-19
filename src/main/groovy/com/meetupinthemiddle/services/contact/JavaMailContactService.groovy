@@ -31,9 +31,9 @@ class JavaMailContactService implements ContactService{
       def emailMessage = new SimpleMailMessage()
       emailMessage.with {
         to = toEmailAddress
-        from = formBean.email
+        from = noreplyEmail
         subject = formBean.subject
-        text = "Message from $formBean.name: \n $formBean.message"
+        text = "Message from $formBean.name <$formBean.email>: \n $formBean.message"
       }
 
       messages << emailMessage

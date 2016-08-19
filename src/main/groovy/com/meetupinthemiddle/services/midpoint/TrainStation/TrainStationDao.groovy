@@ -1,5 +1,6 @@
 package com.meetupinthemiddle.services.midpoint.trainStation
 
+import com.meetupinthemiddle.model.BoundingBox
 import com.meetupinthemiddle.model.LatLong
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -25,36 +26,35 @@ class TrainStationDao {
   @Autowired
   private NamedParameterJdbcTemplate jdbcTemplate
 
-  List<TrainStation> findStations(LatLong minLatLong, LatLong maxLatLong) {
-    MapSqlParameterSource params = getParamMap(minLatLong, maxLatLong)
+  List<TrainStation> findStations(BoundingBox boundingBox) {
+    MapSqlParameterSource params = getParamMap(boundingBox)
 
     jdbcTemplate.query(SQL, params, trainStationRowMapper)
   }
 
-  private getParamMap(LatLong minLatLong, LatLong maxLatLong) {
+  private getParamMap(BoundingBox boundingBox) {
+    def minLatLong = boundingBox.minLatLong
+    def maxLatLong = boundingBox.maxLatLong
+
     def params = new MapSqlParameterSource()
     params.addValue("MIN_LAT", minLatLong.lat)
     params.addValue("MIN_LONG", minLatLong.lng)
     params.addValue("MAX_LAT", maxLatLong.lat)
     params.addValue("MAX_LONG", maxLatLong.lng)
 
-    def qtrDiffInLat = (maxLatLong.lat - minLatLong.lat) / 4
-    def qtrDiffInLong = (maxLatLong.lng - minLatLong.lng) / 4
+    def halfBoundingBox = boundingBox.scale(2)
 
-    def halfMinLat = minLatLong.lat + qtrDiffInLat
-    def halfMinLong = minLatLong.lng + qtrDiffInLong
-    def halfMaxLat = maxLatLong.lat - qtrDiffInLat
-    def halfMaxLong = maxLatLong.lng - qtrDiffInLong
+    params.addValue("HALF_MIN_LAT", halfBoundingBox.minLatLong.lat)
+    params.addValue("HALF_MIN_LONG", halfBoundingBox.minLatLong.lng)
+    params.addValue("HALF_MAX_LAT", halfBoundingBox.maxLatLong.lat)
+    params.addValue("HALF_MAX_LONG", halfBoundingBox.maxLatLong.lng)
 
-    params.addValue("HALF_MIN_LAT", halfMinLat)
-    params.addValue("HALF_MIN_LONG", halfMinLong)
-    params.addValue("HALF_MAX_LAT", halfMaxLat)
-    params.addValue("HALF_MAX_LONG", halfMaxLong)
+    def qtrBoundingBox = boundingBox.scale(4)
 
-    params.addValue("QTR_MIN_LAT", halfMinLat + qtrDiffInLat / 2)
-    params.addValue("QTR_MIN_LONG", halfMinLong + qtrDiffInLong / 2)
-    params.addValue("QTR_MAX_LAT", halfMaxLat - qtrDiffInLat / 2)
-    params.addValue("QTR_MAX_LONG", halfMaxLong - qtrDiffInLong / 2)
+    params.addValue("QTR_MIN_LAT", qtrBoundingBox.minLatLong.lat)
+    params.addValue("QTR_MIN_LONG", qtrBoundingBox.minLatLong.lng)
+    params.addValue("QTR_MAX_LAT", qtrBoundingBox.maxLatLong.lat)
+    params.addValue("QTR_MAX_LONG", qtrBoundingBox.maxLatLong.lng)
 
     params
   }

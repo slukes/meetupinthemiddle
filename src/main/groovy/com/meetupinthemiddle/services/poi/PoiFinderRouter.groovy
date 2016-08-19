@@ -6,7 +6,7 @@ import com.meetupinthemiddle.model.POIType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import static com.meetupinthemiddle.model.POIType.MEETING
+import static POIType.MEETING
 
 /**
  * This class exists to be a router to the different types of POI finder

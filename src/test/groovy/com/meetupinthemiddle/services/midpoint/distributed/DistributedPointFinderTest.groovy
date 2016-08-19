@@ -1,4 +1,6 @@
 package com.meetupinthemiddle.services.midpoint.distributed
+
+import com.meetupinthemiddle.model.BoundingBox
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.services.midpoint.PointFinder
 import org.junit.Test
@@ -12,8 +14,8 @@ class DistributedPointFinderTest {
 
   @Test
   void testPointsAreDistributed() {
-    def result = distributedFinder.doFind(new LatLong(0.0, 0.0),
-        new LatLong(10, 10))
+    def result = distributedFinder.doFind(new BoundingBox(new LatLong(0.0, 0.0),
+        new LatLong(10, 10)))
 
     def expected = []
 
@@ -30,8 +32,8 @@ class DistributedPointFinderTest {
 
   @Test
   void copeWithNegativeNumbers() {
-    def result = distributedFinder.doFind(new LatLong(-10, -10),
-        new LatLong(0, 0))
+    def result = distributedFinder.doFind(new BoundingBox(new LatLong(-10, -10),
+        new LatLong(0, 0)))
 
     def expected = []
 
@@ -48,8 +50,8 @@ class DistributedPointFinderTest {
 
   @Test
   void copeWithNoDifference() {
-    def result = distributedFinder.doFind(new LatLong(10, 10),
-        new LatLong(10, 10))
+    def result = distributedFinder.doFind(new BoundingBox(new LatLong(10, 10),
+        new LatLong(10, 10)))
 
     assertThat(result, hasSize(1))
   }
