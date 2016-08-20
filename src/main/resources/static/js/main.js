@@ -87,6 +87,8 @@ function initAutocomplete() {
       $submitButton = $("#submitButton"),
       $overlay = $("#overlay"),
       $grip = $("#grip", $overlay),
+      $hideArrows = $("#hideArrows", $overlay),
+      $showArrows = $("#showArrows", $overlay),
       $errorSection = $("#error-section");
 
     $newName.focus();
@@ -213,7 +215,7 @@ function initAutocomplete() {
       ajaxSearch();
     });
 
-    $("[data-toggle='tooltip']").tooltip();
+    $("[data-toggle='tooltip']").tooltip({container: ".overlayContent"});
 
     function addPinToMap(location, name) {
       var marker = new google.maps.Marker({
@@ -338,7 +340,7 @@ function initAutocomplete() {
       req.done(function (data) {
         $searchOverlayContent.html(data.html);
         for (var i = 0; i < data.pois.length; i++) {
-          var latLng = data.pois[i].latLng;
+          var latLng = data.pois[i].latLong;
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(latLng.lat, latLng.lng),
             label: "" + (i + 1),
@@ -442,15 +444,23 @@ function initAutocomplete() {
       });
     }
 
+    //Ability to just tap to peel back / reset after feedback that resetting was hard
+    $hideArrows.click(peelBackOverlay);
+    $showArrows.click(resetOverlay);
+
     function peelBackOverlay() {
       if (settings.isMobile) {
         $overlay.animate({left: maxleft()}, "fast");
+        $hideArrows.hide();
+        $showArrows.show();
       }
     }
 
     function resetOverlay() {
       if (settings.isMobile) {
         $overlay.animate({left: 0}, "fast");
+        $showArrows.hide();
+        $hideArrows.show();
       }
     }
 

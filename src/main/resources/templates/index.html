@@ -4,12 +4,16 @@
 <body>
 <header th:replace="fragments/layout :: header"></header>
 <section id="overlay">
-    <span id="grip"></span>
+    <section id="grip">
+        <i class="fa fa-angle-double-left fa-lg pull-right" id="hideArrows" aria-hidden="true"></i>
+        <i class="fa fa-angle-double-right fa-lg pull-right" id="showArrows" aria-hidden="true" hidden></i>
+    </section>
     <section id="searchoverlayContent" class="overlayContent">
-        <section class="glyphSpace">
-            <span id="tooltip" class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true"
+        <section class="row">
+            <span id="tooltip" class="glyphicon glyphicon-question-sign pull-left" aria-hidden="true"
                   data-toggle="tooltip" data-placement="bottom"
-                  title="Get started by entering the names, start locations and transport methods of each person you're meeting"></span>
+                  title="Get started by entering the names, start locations and transport methods of each person you're meeting">
+            </span>
         </section>
         <section id="error-section" class="alert alert-danger"
                  th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
@@ -32,6 +36,7 @@
                 </label>
             </section>
 
+            <section></section>
             <span id="add-person" class="fa fa-plus-circle fa-2x pull-right disabled"></span>
             <table class="table" id="peopleTable">
                 <tbody>

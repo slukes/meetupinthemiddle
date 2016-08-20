@@ -1,5 +1,4 @@
 package com.meetupinthemiddle.services.midpoint.trainStation
-
 import com.meetupinthemiddle.model.BoundingBox
 import com.meetupinthemiddle.model.LatLong
 import groovy.transform.EqualsAndHashCode

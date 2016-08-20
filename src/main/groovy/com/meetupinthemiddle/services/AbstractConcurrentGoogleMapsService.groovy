@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.services
+
 import com.google.maps.PendingResult
 
 import java.util.concurrent.ExecutionException
@@ -6,6 +7,7 @@ import java.util.concurrent.ExecutorCompletionService
 import java.util.concurrent.Future
 
 import static java.util.concurrent.Executors.newCachedThreadPool
+
 /**
  * Extension of AbstractGoogleMapsService which also executes its requests concurrently.
  */
