@@ -49,6 +49,8 @@ function initAutocomplete() {
       poiMarkers = [],
       infowindows = [],
       haveNewValue = false,
+      isTest = $("#map").data("test"),
+      editingPerson,
       errorMessages = {
         UNKNOWN: "Sorry, an unknown error occurred.",
         NOT_ENOUGH_PEOPLE: "Ooops!  You need at least two people to MeetUpInTheMiddle!",
@@ -57,7 +59,7 @@ function initAutocomplete() {
         MISSING_OR_INVALID_POI_TYPE: "Ooops!  Please tell us what kind of place you are looking to meet at!",
         MISSING_OR_INVALID_TRANSPORT_MODE: "Ooops!  Please tell us how everyone is travelling in!",
         UNKNOWN_LOCATION: "Ooops!  We can't find one or more of your locations.  Only locations in the UK are supported.",
-        OVER_QUOTA: "Ooops!  MeetUpInTheMiddle.com makes use of data from Google Maps, which they charge for.  In order to keep the site free we have to limit the number of requests per day.  Please come back after 8am to perform your search."
+        OVER_QUOTA: "Ooops!  MeetUpInTheMiddle.com makes use of data from Google Maps, which they charge for.  In order to keep the site free we have to limit the number of requests per day.  Please come back after 8am"
       },
       templates = {};
 
@@ -74,8 +76,6 @@ function initAutocomplete() {
       window.alert("An error occurred loading the page");
       return;
     }
-
-    var isTest = $("#map").data("test");
 
     var $searchOverlayContent = $("#searchoverlayContent"),
       $newPersonForm = $("#newPersonForm"),
@@ -115,15 +115,18 @@ function initAutocomplete() {
       var name = $newName.val();
       var location = $newFrom.val();
       var mode = $newMode.val();
-      //How to display it to the user
-      var prettyMode = $newMode.find("option[value=" + mode + "]").text();
 
       geocoder.geocode({
         "address": location, "region": "GB", componentRestrictions: {country: 'UK'}
       }, function (results, status) {
         if (status === google.maps.GeocoderStatus.OK && results[0].address_components.length > 1) { //Length of one is address of "UK" means it wasn't found.
           var latLng = results[0].geometry.location;
-          new Person(name, location, latLng, mode, prettyMode);
+          if (editingPerson === undefined || editingPerson === null) { //Don't rely on falsy since person ids start from 0
+            new Person(name, location, latLng, mode);
+          } else {
+            people[editingPerson].person.update(name, location, latLng, mode);
+            editingPerson = null;
+          }
 
           $newPersonForm[0].reset();
           haveNewValue = false;
@@ -135,7 +138,6 @@ function initAutocomplete() {
 
           $newName.focus()
         } else {
-          //TODO if the geo-coded location is not in the UK - give a sensible error.  This needs doing on the backend too.
           addError("UNKNOWN_LOCATION");
         }
       });
@@ -156,12 +158,13 @@ function initAutocomplete() {
      * remove the pin from the map and from the JSON object that we
      * are building up to send to the backend.
      */
-    $(document.body).on("click", ".removePerson", function (e) {
-      var idToRemove = e.target.id.replace(/remove\[(\d)\]/, "$1");
+    $(document.body).on("click", ".removePerson:not(.disabled)", function (e) {
+      var $row = $(this).closest("tr");
+      var idToRemove = $row.data("personid");
       people[idToRemove].person.remove();
 
       //Get rid of the row in the table
-      $(this).closest("tr").remove();
+      $row.remove();
 
       //Disable the submit button if required
       if (Object.keys(people).length < 2) {
@@ -169,11 +172,45 @@ function initAutocomplete() {
       }
     });
 
+    /**
+     * When we click the pencil next to a row in the table,
+     * we need to set the form fields to be the values relating to that person
+     * so they can be edited.
+     *
+     * I am considering changing this to use some kind of popover functionality /edit in place
+     * however want to get it running this way to get feedback first.
+     */
+    $(document.body).on("click", ".editPerson:not(.disabled)", function (e) {
+      var $row = $(this).closest("tr");
+      var idToEdit = $row.data("personid");
+      var person = people[idToEdit].person;
+
+      //If we are already editing someone else, say no, otherwise set flag
+      if (editingPerson) {
+        //TODO - better way of doing this.
+        alert("Please finish editing " + people[editingPerson].person.name + " before editing another person.")
+        return;
+      } else {
+        editingPerson = idToEdit;
+      }
+
+      //Set the form fields to the values of the person
+      $newName.val(person.name);
+      $newFrom.val(person.from);
+      $newMode.val(person.transportMode);
+      haveNewValue = true; //We must have something since we just put it there
+      $addPersonBtn.removeClass("disabled");
+
+      //Grey out the row in the table
+      $row.addClass("disabled");
+      var controls = $row.find(".tableControl");
+      controls.addClass("disabled");
+    });
+
     $submitButton.click(function (e) {
       e.preventDefault();
       ajaxSearch();
     });
-
 
     $("[data-toggle='tooltip']").tooltip();
 
@@ -189,10 +226,10 @@ function initAutocomplete() {
       return marker;
     }
 
-    function Person(name, from, latLong, transportMode, prettyTransportMode) {
+    function Person(name, from, latLng, transportMode) {
       this.name = name;
       this.from = from;
-      this.latLong = latLong;
+      this.latLng = latLng;
       this.transportMode = transportMode;
       this.id = personId;
 
@@ -200,23 +237,48 @@ function initAutocomplete() {
       //The ones in the object are only required by the JS.
       people[this.id] = {
         person: this,
-        marker: addPinToMap(latLong, name),
-        prettyTransportMode: prettyTransportMode
+        marker: addPinToMap(latLng, name),
+        transportIcon: this.transportMode === "DRIVING" ? "car" : "bus"
       };
 
       centreMap();
 
       personId += 1;
-      $peopleTable.find("tbody").append(Mustache.to_html(templates.tableRow, this));
+      $peopleTable.find("tbody").append(Mustache.to_html(templates.tableRow, people[this.id]));
+
+      this.update = function (name, from, latLng, transportMode) {
+        this.name = name;
+        this.from = from;
+        this.transportMode = transportMode;
+
+        //If we were editing a person we need to replace their table row.
+        //We could try and update the existing one - but it would be more fragile to changes in the markup
+        $peopleTable.find('*[data-personid="' + this.id + '"]')
+          .replaceWith(Mustache.to_html(templates.tableRow, people[this.id]));
+
+        people[this.id].marker.setPosition(latLng);
+        people[this.id].marker.setLabel(name);
+        rebuildMapBounds();
+        centreMap();
+      };
 
       this.remove = function () {
         people[this.id].marker.setMap(null);
         delete people[this.id];
-        bounds = new google.maps.LatLngBounds();
-        for (var person in people) {
-          bounds.extend(people[person].marker.getPosition());
-        }
+        rebuildMapBounds(people);
         centreMap();
+      };
+    }
+
+    /**
+     * If we have updated the location of a person or removed one,
+     * we need to call this before centering hte map.  If we have just added
+     * a person - no need.
+     */
+    function rebuildMapBounds() {
+      bounds = new google.maps.LatLngBounds();
+      for (var person in people) {
+        bounds.extend(people[person].marker.getPosition());
       }
     }
 
@@ -273,13 +335,9 @@ function initAutocomplete() {
        * If something went wrong, tell the user I'm sorry!
        */
       req.done(function (data) {
-        //TODO - fix this
-        //$("#submitButton").button("reset");
-        //$searchOverlayContent.hide();
-        //$overlay.prepend(data.html);
         $searchOverlayContent.html(data.html);
         for (var i = 0; i < data.pois.length; i++) {
-          var latLng = data.pois[i].latLong;
+          var latLng = data.pois[i].latLng;
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(latLng.lat, latLng.lng),
             label: "" + (i + 1),

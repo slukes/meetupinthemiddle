@@ -96,6 +96,11 @@
       <version>2.2.1</version>
     </dependency>
     <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>font-awesome</artifactId>
+      <version>4.6.3</version>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
       <version>1.9.22</version>
@@ -217,5 +222,4 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-
 </project>

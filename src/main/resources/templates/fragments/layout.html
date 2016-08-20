@@ -4,9 +4,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>MeetUpInTheMiddle</title>
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
     <script th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.6/js/tooltip.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.6/js/alert.js}"></script>
     <script th:src="@{/webjars/mustachejs/2.2.1/mustache.min.js}"></script>
     <script th:src="@{/js/main.js}"></script>
     <script th:src="@{/js/cookie.js}"></script>
@@ -15,17 +17,16 @@
 </head>
 
 <header th:fragment="header">
-    <section th:if="${contact_success} == true" class="top-bar" id="mail-bar">
+    <section th:if="${contact_success} == true" class="alert alert-success" id="mail-bar" role="alert">
         <p>Message Sent Successfully</p>
     </section>
-    <section class="top-bar" id="cookie-bar">
+    <section class="alert alert-warning alert-dismissible top-bar" hidden="hidden" id="cookie-bar" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <p>By using MeetUpInTheMiddle you are consenting to our use of cookies to improve your experience.</p>
-        <span id="close-cookie-bar" class="glyphicon glyphicon-remove pull-right"></span>
     </section>
     <noscript>
-        <section class="top-bar">
-            <p><strong>This site requires JavaScript to work. Please enable JavaScript and refresh the page.</strong>
-            </p>
+        <section class="alert alert-danger top-bar" role="alert">
+            <p><strong>This site requires JavaScript to work. Please enable JavaScript and refresh the page.</strong></p>
         </section>
     </noscript>
     <section class="row">

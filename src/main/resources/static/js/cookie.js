@@ -1,7 +1,6 @@
 $(function () {
-  $("#cookie-bar").on("click", "#close-cookie-bar", function () {
+  $("#cookie-bar").on("closed.bs.alert", function () {
     setConsentCookie();
-    $('#cookie-bar').hide();
   });
 
   getCookieConsent();
