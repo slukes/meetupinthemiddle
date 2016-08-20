@@ -70,6 +70,13 @@ footer {
 
 #add-person {
     cursor: pointer;
+    color: #337AB7;
+    display: inline;
+    padding: 3px 0 3px 0;
+}
+
+.btn-group {
+    display: inline;
 }
 
 .disabled#add-person {
@@ -80,7 +87,7 @@ footer {
     color: red;
 }
 
-.removePerson:hover{
+.removePerson:hover {
     color: red;
 }
 
@@ -89,11 +96,11 @@ footer {
     opacity: 0.5;
 }
 
-tr.disabled{
+tr.disabled {
     opacity: 0.5;
 }
 
-.tableControl.disabled{
+.tableControl.disabled {
     cursor: not-allowed;
 }
 
@@ -102,7 +109,7 @@ tr.disabled{
 }
 
 .form-control {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .glyphSpace {

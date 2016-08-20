@@ -9,6 +9,7 @@ var map,
   };
 
 function initMap() {
+  overrideBoundsMethod();
   bounds = new google.maps.LatLngBounds();
   geocoder = new google.maps.Geocoder();
 
@@ -81,7 +82,6 @@ function initAutocomplete() {
       $newPersonForm = $("#newPersonForm"),
       $newName = $("#newName", $newPersonForm),
       $newFrom = $("#newFrom", $newPersonForm),
-      $newMode = $("#newMode", $newPersonForm),
       $addPersonBtn = $("#add-person", $newPersonForm),
       $peopleTable = $("#peopleTable", $newPersonForm),
       $submitButton = $("#submitButton"),
@@ -114,7 +114,7 @@ function initAutocomplete() {
 
       var name = $newName.val();
       var location = $newFrom.val();
-      var mode = $newMode.val();
+      var mode = $("input[name='newMode']:checked", $newPersonForm).val();
 
       geocoder.geocode({
         "address": location, "region": "GB", componentRestrictions: {country: 'UK'}
@@ -197,7 +197,8 @@ function initAutocomplete() {
       //Set the form fields to the values of the person
       $newName.val(person.name);
       $newFrom.val(person.from);
-      $newMode.val(person.transportMode);
+      //Simulating a click takes care of bootstrap classes etc. too.
+      $("input[name='newMode'][value=" + person.transportMode + "]").click()
       haveNewValue = true; //We must have something since we just put it there
       $addPersonBtn.removeClass("disabled");
 
@@ -295,7 +296,7 @@ function initAutocomplete() {
         map.setCenter(people[Object.keys(people)[0]].marker.getPosition());
         map.setZoom(10);
       } else {
-        map.fitBounds(bounds);
+        map.fitBounds(bounds, {left: $overlay.width()});
       }
     }
 

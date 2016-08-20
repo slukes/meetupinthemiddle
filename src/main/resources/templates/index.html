@@ -21,13 +21,18 @@
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
             <input class="form-control person-form-control" type="text" id="newName" placeholder="name"/>
             <input class="form-control person-form-control" type="text" id="newFrom" placeholder="traveling from"/>
-            <select class="form-control person-form-control" id="newMode" title="mode of transport">
-                <option th:each="type : ${T(com.meetupinthemiddle.model.TransportMode).values()}"
-                        th:value="${type}" th:text="${type.getText()}"></option>
-            </select>
-            <section class="glyphSpace">
-                <span id="add-person" class="glyphicon glyphicon-plus pull-left disabled"></span>
+            <section class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="newMode" value="DRIVING" autocomplete="off" checked><i
+                        class="fa fa-car fa-lg fa-fw"></i>
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="newMode" value="PUBLIC" autocomplete="off"><i
+                        class="fa fa-bus fa-lg fa-fw"></i>
+                </label>
             </section>
+
+            <span id="add-person" class="fa fa-plus-circle fa-2x pull-right disabled"></span>
             <table class="table" id="peopleTable">
                 <tbody>
                 </tbody>
