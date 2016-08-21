@@ -28,28 +28,21 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
     def result = [:]
     def publicResults = []
     def drivingResults = []
-
-    Person[] publicPeople = people.findAll { it.transportMode == PUBLIC }
-    Person[] drivingPeople = people.findAll { it.transportMode == DRIVING }
+    def (drivingPeople, publicPeople) = people.split { it.transportMode == DRIVING }
     LatLng[] publicGmStarts = getGoogleStartsForPeople(publicPeople)
     LatLng[] drivingGmStarts = getGoogleStartsForPeople(drivingPeople)
-    LatLng[] gmDestinations = mapDestinations(points)
-    def destLength = gmDestinations.length
+    def gmDestinations = mapDestinations(points)
 
-    def i = 0
-    while (i < destLength - 1) {
-      def batchSize = destLength - i >= MAX_PER_REQ ? MAX_PER_REQ : destLength % 25
-      LatLng[] batch = gmDestinations[i..i + batchSize - 1]
-      if (publicGmStarts.length > 0) {
+    gmDestinations.collate(MAX_PER_REQ).each {
+      batch ->
+        if (publicGmStarts.length > 0) {
 
-        publicResults << new Tuple2<>(doBatch(publicGmStarts, batch, PUBLIC), batch)
-      }
+          publicResults << new Tuple2<>(doBatch(publicGmStarts, batch as LatLng[], PUBLIC), batch)
+        }
 
-      if (drivingGmStarts.length > 0) {
-        drivingResults << new Tuple2<>(doBatch(drivingGmStarts, batch, DRIVING), batch)
-      }
-
-      i += 25
+        if (drivingGmStarts.length > 0) {
+          drivingResults << new Tuple2<>(doBatch(drivingGmStarts, batch as LatLng[], DRIVING), batch)
+        }
     }
 
     publicResults.each {
@@ -70,18 +63,16 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
   }
 
   private mapDestinations(List<LatLong> points) {
-    points.stream()
-        .map({ it != null ? new LatLng(it.lat, it.lng) : null })
-        .filter({ it != null })
-        .toArray()
+    points - null
+    points.collect { new LatLng(it.lat, it.lng) }
   }
 
-  private getGoogleStartsForPeople(Person[] people) {
+  private getGoogleStartsForPeople(List<Person> people) {
     people.collect { new LatLng(it.latLong.lat, it.latLong.lng) }
   }
 
-  private addResults(Person[] people, DistanceMatrix resp, LatLng[] points, Map<LatLong, List<Integer>> result) {
-    for (def i = 0; i < points.length; i++) {
+  private addResults(List<Person> people, DistanceMatrix resp, List<LatLng> points, Map<LatLong, List<Integer>> result) {
+    for (def i = 0; i < points.size(); i++) {
       //Each row in the google model represents a person
       //Each element in the row represents a destination
       def latLong = new LatLong(points[i].lat, points[i].lng)
@@ -98,7 +89,7 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
   }
 
   private Future<DistanceMatrix> doGoogleMapsRequest(LatLng[] origins, LatLng[] points, TravelMode mode) {
-    doCall(
+    doConcurrentCall(
         newRequest(context)
             .mode(mode)
             .origins(origins)

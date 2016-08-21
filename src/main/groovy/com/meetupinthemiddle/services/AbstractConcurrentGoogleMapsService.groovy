@@ -31,8 +31,7 @@ class AbstractConcurrentGoogleMapsService<T, R extends PendingResult<T>> extends
     }
   }
 
-  @Override
-  protected Future<T> doCall(R request) {
+  protected Future<T> doConcurrentCall(R request) {
     executor.submit({ super.doCall(request) })
   }
 }

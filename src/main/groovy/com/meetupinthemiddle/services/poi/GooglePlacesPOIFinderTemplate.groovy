@@ -1,5 +1,4 @@
 package com.meetupinthemiddle.services.poi
-
 import com.google.maps.GeoApiContext
 import com.google.maps.NearbySearchRequest
 import com.google.maps.model.*
@@ -10,11 +9,6 @@ import com.meetupinthemiddle.services.AbstractGoogleMapsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
-
-import java.util.function.Function
-import java.util.stream.Collectors
-
-import static java.util.Arrays.asList
 
 abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<PlacesSearchResponse, NearbySearchRequest> implements POIFinder {
   @Autowired
@@ -38,41 +32,39 @@ abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<P
   POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
     def results = []
     def nextPage = null
+
     while (results.size() < numberToFind) {
       def googleResp = doSearch(location, type, nextPage)
 
       results.addAll(
           googleResp.results
-              .findAll { DISALLOWED_TERMS.intersect(asList(it.types)).size() == 0 }
+              .findAll { DISALLOWED_TERMS.intersect(it.types.toList()).size() == 0 }
       )
     }
 
     results
-        .stream()
-        .limit(numberToFind)
-        .map(mapPlaceToPoiFunction)
-        .collect(Collectors.toList())
+        .take(numberToFind)
+        .collect(mapToPOI)
   }
 
   protected abstract PlacesSearchResponse doSearch(LatLong location, POIType type, String pageToken)
 
-  private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction =
-      {
-        place ->
-          PlaceDetails placeDetails = owner.detailsFinder.getDetails(place)
+  private Closure<POI> mapToPOI = {
+    place ->
+      PlaceDetails placeDetails = owner.detailsFinder.getDetails(place)
 
-          new POI().with {
-            name = place.name
-            address = placeDetails.formattedAddress
-            latLong = mapLatLngToMeetModel(place.geometry.location)
-            phoneNumber = placeDetails.formattedPhoneNumber
-            imageUrl = extractPhotoUrl(place)
-            website = extractWebsite(placeDetails)
-            openingTimes = placeDetails.openingHours?.weekdayText
-            rating = place.rating
-            it
-          }
+      new POI().with {
+        name = place.name
+        address = placeDetails.formattedAddress
+        latLong = mapLatLngToMeetModel(place.geometry.location)
+        phoneNumber = placeDetails.formattedPhoneNumber
+        imageUrl = extractPhotoUrl(place)
+        website = extractWebsite(placeDetails)
+        openingTimes = placeDetails.openingHours?.weekdayText
+        rating = place.rating
+        it
       }
+  }
 
   protected String extractWebsite(PlaceDetails placeDetails) {
     placeDetails.website?.toString()
@@ -89,7 +81,6 @@ abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<P
   protected String formatPhotoUrl(final Photo photo) {
     return String.format(photoUrlFormat, photo.photoReference)
   }
-
 
   protected LatLng mapLatLongToGoogleModel(location) {
     new LatLng(location.getLat(), location.getLng())

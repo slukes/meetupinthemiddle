@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
+import static com.google.maps.model.AddressComponentType.COUNTRY
+
 @Service
-class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult, GeocodingApiRequest> implements Geocoder {
+class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult[], GeocodingApiRequest> implements Geocoder {
   @Autowired
   private GeoApiContext context
 
@@ -24,10 +26,12 @@ class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult, Geoc
   LatLong geocode(final String location) {
     def resp = doCall(GeocodingApi.geocode(context, location))
     if (resp.length > 0) {
-      def result = Arrays.<GeocodingResult> stream(resp)
-          .filter({
-        it.addressComponents.find({ it.types.contains(AddressComponentType.COUNTRY) }).shortName == "GB"
-      }).findFirst().get()
+      def result = resp.find {
+        it.addressComponents
+            .find { it.types.contains(COUNTRY) }
+            .shortName == "GB"
+      }
+
       new LatLong(lat: result.geometry.location.lat, lng: result.geometry.location.lng)
     } else {
       return null

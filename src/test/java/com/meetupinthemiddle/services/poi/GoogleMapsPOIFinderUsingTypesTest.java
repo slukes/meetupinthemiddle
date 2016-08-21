@@ -28,7 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest({PlacesApi.class, PlacesSearchResult.class, NearbySearchRequest.class})
 public class GoogleMapsPOIFinderUsingTypesTest {
   @InjectMocks
-  GooglePlacesPOIFinderUsingTypes googleMapsPoiFinder = new GooglePlacesPOIFinderUsingTypes();
+  GooglePlacesPOIFinderTemplate googleMapsPoiFinder = new GooglePlacesPOIFinderUsingTypes();
 
   @Mock
   GeoApiContext ctx;

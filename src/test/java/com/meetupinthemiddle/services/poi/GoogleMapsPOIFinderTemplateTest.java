@@ -5,6 +5,7 @@ import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.Geometry;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.meetupinthemiddle.model.LatLong;
 import com.meetupinthemiddle.model.POI;
@@ -50,8 +51,8 @@ public class GoogleMapsPOIFinderTemplateTest {
 
     googleMapsPoiFinder = new GooglePlacesPOIFinderTemplate() {
       @Override
-      protected PlacesSearchResult[] doSearch(final LatLong location, final POIType type) {
-        return aPlacesSearchResponse().results;
+      protected PlacesSearchResponse doSearch(final LatLong location, final POIType type, final String pageToken) {
+        return aPlacesSearchResponse();
       }
     };
   }
