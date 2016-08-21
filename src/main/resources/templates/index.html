@@ -3,7 +3,7 @@
 <head th:replace="fragments/layout :: head-elements"></head>
 <body>
 <header th:replace="fragments/layout :: header"></header>
-<section id="overlay">
+<main id="overlay">
     <section id="grip">
         <i class="fa fa-angle-double-left fa-lg pull-right" id="hideArrows" aria-hidden="true"></i>
         <i class="fa fa-angle-double-right fa-lg pull-right" id="showArrows" aria-hidden="true" hidden></i>
@@ -23,36 +23,47 @@
         </section>
 
         <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
-            <input class="form-control person-form-control" type="text" id="newName" placeholder="name"/>
-            <input class="form-control person-form-control" type="text" id="newFrom" placeholder="traveling from"/>
+            <input class="form-control person-form-control" type="text" id="newName" placeholder="name"
+                   title="the name of the person"/>
+
+            <input class="form-control person-form-control" type="text" id="newFrom"
+                   title="the location that the person is starting from e.g. a town, address or postcode"
+                   placeholder="traveling from"/>
+
             <section class="btn-group" data-toggle="buttons">
                 <label class="btn btn-primary active">
-                    <input type="radio" name="newMode" value="DRIVING" autocomplete="off" checked><i
-                        class="fa fa-car fa-lg fa-fw"></i>
+                    <input type="radio" name="newMode" value="DRIVING" title="this person is driving" autocomplete="off" checked>
+                    <i class="fa fa-car fa-lg fa-fw" aria-hidden="true"></i>
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="newMode" value="PUBLIC" autocomplete="off"><i
-                        class="fa fa-bus fa-lg fa-fw"></i>
+                    <input type="radio" name="newMode" title="this person is coming by public transport" value="PUBLIC" autocomplete="off">
+                    <i class="fa fa-bus fa-lg fa-fw" aria-hidden="true"></i>
                 </label>
             </section>
 
             <section></section>
-            <span id="add-person" class="fa fa-plus-circle fa-2x pull-right disabled"></span>
-            <table class="table" id="peopleTable">
+            <a id="add-person" aria-label="Add person">
+                <span aria-hidden="true" class="fa fa-plus-circle fa-2x pull-right disabled"
+                      title="Click to add this person to your search"></span>
+            </a>
+            <table class="table" id="peopleTable" aria-label="the people who will be coming to your MeetUpInTheMiddle">
                 <tbody>
+                <tr>
+                </tr>
                 </tbody>
             </table>
             <select id="poi" title="Type of place to meet" class="form-control">
                 <option th:each="type : ${T(com.meetupinthemiddle.model.POIType).values()}"
                         th:value="${type}" th:text="${type.getText()} + ' in the middle'"></option>
             </select>
-            <button type="button" disabled id="submitButton" class="btn btn-primary btn-block">
+            <button type="button" role="button" title="perform search" disabled id="submitButton"
+                    class="btn btn-primary btn-block">
                 MeetUpInTheMiddle!
             </button>
         </form>
     </section>
     <section id="share" th:replace="fragments/social :: share"></section>
-</section>
+</main>
 <section class="" id="map" th:attr="data-test=${isTest}"></section>
 <footer th:replace="fragments/layout :: footer"></footer>
 </body>

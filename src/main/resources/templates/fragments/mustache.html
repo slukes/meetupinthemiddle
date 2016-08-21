@@ -3,7 +3,7 @@
 <th:block th:fragment="templates">
     <script type="text/template" id="js-error-template">
         <span class='error-message'>
-            <span class='glyphicon glyphicon-exclamation-sign'></span>
+            <span class='glyphicon glyphicon-exclamation-sign' aria-hidden="true"></span>
             {{message}}
         </span>
         <br/>
@@ -16,16 +16,17 @@
                 <h4>{{name}}</h4>
             </section>
             <section>
-                {{#address}}<span class="info-window-element-wrapper"><span
-                    class="glyphicon glyphicon-home info-window-element"></span> {{address}}</span>{{/address}}
-                {{#phoneNumber}}<span class="info-window-element-wrapper"><span
-                    class="glyphicon glyphicon-phone info-window-element"></span> {{phoneNumber}}</span>{{/phoneNumber}}
+                {{#address}}<span class="info-window-element-wrapper" aria-label="address"><span
+                    class="glyphicon glyphicon-home info-window-element" aria-hidden="true"></span> {{address}}</span>{{/address}}
+                {{#phoneNumber}}<span class="info-window-element-wrapper" aria-label="phone number"><span
+                    class="glyphicon glyphicon-phone info-window-element"
+                    aria-hidden="true"></span> {{phoneNumber}}</span>{{/phoneNumber}}
             </section>
 
             <section class="info-window-links">
-                {{#website}}<a class="glyphicon glyphicon-link" href="{{website}}" target="_blank"></a>{{/website}}
+                {{#website}}<a class="glyphicon glyphicon-link" title="website" href="{{website}}" target="_blank"></a>{{/website}}
                 {{#openingTimes.length}}<a
-                    class="glyphicon glyphicon-time opening-hours-glyph"></a>{{/openingTimes.length}}
+                    class="glyphicon glyphicon-time opening-hours-glyph" title="opening hours"></a>{{/openingTimes.length}}
             </section>
 
             {{#openingTimes.length}}
@@ -44,9 +45,12 @@
             <td><i class="personMarker fa fa-map-marker fa-lg" aria-hidden="true"></i></td>
             <td>{{person.name}}</td>
             <td>{{person.from}}</td>
-            <td><i class="fa fa-{{transportIcon}} fa-lg fa-fw"></i></td>
-            <td><a class="editPerson tableControl" title="edit {{person.name}}"><i class="fa fa-pencil fa-lg fa-fw"></i></a></td>
-            <td><a class="removePerson tableControl" title="remove {{person.name}}"><i class="fa fa-trash fa-lg fa-fw"></i></a></td>
+            <td title="travelling by {{person.transportMode}}"><i class="fa fa-{{transportIcon}} fa-lg fa-fw"
+                                                                  aria-hidden="true"></i></td>
+            <td><a class="editPerson tableControl" title="edit {{person.name}}"><i class="fa fa-pencil fa-lg fa-fw"
+                                                                                   aria-hidden="true"></i></a></td>
+            <td><a class="removePerson tableControl" title="remove {{person.name}}"><i class="fa fa-trash fa-lg fa-fw"
+                                                                                       aria-hidden="true"></i></a></td>
         </tr>
     </script>
 </th:block>

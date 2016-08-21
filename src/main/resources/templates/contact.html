@@ -24,12 +24,12 @@
         <section id="error-section" class="alert alert-danger" th:if="${#fields.hasErrors('all') || error != null}"
                  role="alert">
             <th:block th:each="err : ${#fields.allErrors()}">
-                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="error-message" th:text="${err}"></span>
                 <br />
             </th:block>
 
-                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="error-message" th:if="${error != null}">An error occured sending your message.  Please try again later.</span>
                 <br />
         </section>
@@ -53,7 +53,6 @@
         <div class="checkbox">
             <label><input th:field="*{sendCopy}" id="sendCopy" type="checkbox"> send me a copy</label>
         </div>
-        <!--TODO - reCAPTURE-->
         <button class="btn btn-primary" type="submit">Send</button>
     </form>
 </section>
