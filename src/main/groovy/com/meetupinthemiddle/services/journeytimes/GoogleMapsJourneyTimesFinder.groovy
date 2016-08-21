@@ -72,14 +72,16 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
   }
 
   private addResults(List<Person> people, DistanceMatrix resp, List<LatLng> points, Map<LatLong, List<Integer>> result) {
-    for (def i = 0; i < points.size(); i++) {
+    points.eachWithIndex { point, i ->
       //Each row in the google model represents a person
       //Each element in the row represents a destination
       def latLong = new LatLong(points[i].lat, points[i].lng)
       def list = []
-      for (def j = 0; j < people.size(); j++) {
-        list.add(resp.rows[j].elements[i].duration?.inSeconds)
+
+      people.eachWithIndex { person, j ->
+        list << resp.rows[j].elements[i].duration?.inSeconds
       }
+
       if (result[latLong] == null) {
         result[latLong] = list
       } else {

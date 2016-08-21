@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 import static com.google.maps.model.AddressComponentType.COUNTRY
+import static com.google.maps.model.AddressComponentType.POSTAL_TOWN
 
 @Service
 class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult[], GeocodingApiRequest> implements Geocoder {
@@ -48,11 +49,12 @@ class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult[], Ge
   private String findTown(GeocodingResult[] results) {
     for (GeocodingResult eachResult : results) {
       for (AddressComponent eachComponent : eachResult.addressComponents) {
-        if (eachComponent.types.contains(AddressComponentType.POSTAL_TOWN)) {
+        if (eachComponent.types.contains(POSTAL_TOWN)) {
           return eachComponent.longName
         }
       }
     }
+
     //If we didn't get a postal town try a level down
     for (GeocodingResult eachResult : results) {
       for (AddressComponent eachComponent : eachResult.addressComponents) {
