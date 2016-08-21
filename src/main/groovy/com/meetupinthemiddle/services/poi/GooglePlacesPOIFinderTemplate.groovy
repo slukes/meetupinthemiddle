@@ -14,7 +14,7 @@ import org.springframework.cache.annotation.Cacheable
 import java.util.function.Function
 import java.util.stream.Collectors
 
-import static java.util.Arrays.stream
+import static java.util.Arrays.asList
 
 abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<PlacesSearchResponse, NearbySearchRequest> implements POIFinder {
   @Autowired
@@ -26,19 +26,35 @@ abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<P
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
+  //Google maps likes to returns things like Greggs as a restaurant
+  // and Oceana as a pub.  Filter out these categories to avoid this.
+  // Ideally I would find an alternative provider with better data, since its not ideal
+  // to exclude all restaurants who also happen to do takeaway.
+  private static final List<String> DISALLOWED_TERMS =
+      ["meal_takeaway", "meal_delivery", "cafe", "night_club"]
+
   @Override
   @Cacheable("pois")
   POI[] findPOIs(LatLong location, int numberToFind, POIType type) {
-    PlacesSearchResult[] googleResponse = doSearch(location, type)
+    def results = []
+    def nextPage = null
+    while (results.size() < numberToFind) {
+      def googleResp = doSearch(location, type, nextPage)
 
-    stream(googleResponse)
+      results.addAll(
+          googleResp.results
+              .findAll { DISALLOWED_TERMS.intersect(asList(it.types)).size() == 0 }
+      )
+    }
+
+    results
+        .stream()
         .limit(numberToFind)
-        .parallel()
         .map(mapPlaceToPoiFunction)
         .collect(Collectors.toList())
   }
 
-  protected abstract PlacesSearchResult[] doSearch(LatLong location, POIType type)
+  protected abstract PlacesSearchResponse doSearch(LatLong location, POIType type, String pageToken)
 
   private final Function<PlacesSearchResult, POI> mapPlaceToPoiFunction =
       {
@@ -48,12 +64,12 @@ abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<P
           new POI().with {
             name = place.name
             address = placeDetails.formattedAddress
-            distanceFromCentrePoint = 0
             latLong = mapLatLngToMeetModel(place.geometry.location)
             phoneNumber = placeDetails.formattedPhoneNumber
             imageUrl = extractPhotoUrl(place)
             website = extractWebsite(placeDetails)
             openingTimes = placeDetails.openingHours?.weekdayText
+            rating = place.rating
             it
           }
       }

@@ -1,7 +1,7 @@
 package com.meetupinthemiddle.services.poi
 
 import com.google.maps.PlacesApi
-import com.google.maps.model.PlacesSearchResult
+import com.google.maps.model.PlacesSearchResponse
 import com.google.maps.model.RankBy
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.POIType
@@ -13,11 +13,15 @@ import static POIType.MEETING
 public class GooglePlacesPOIFinderUsingKeywords extends GooglePlacesPOIFinderTemplate {
   private static final def POI_PLACE_TYPE_MAPPING = [(MEETING): "meeting room"]
 
-  protected PlacesSearchResult[] doSearch(LatLong location, POIType type) {
-    PlacesSearchResult[] googleResponse = doCall(PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
+  protected PlacesSearchResponse doSearch(LatLong location, POIType type, String pageToken) {
+    def req = PlacesApi.nearbySearchQuery(context, mapLatLongToGoogleModel(location))
         .keyword(POI_PLACE_TYPE_MAPPING[type])
-        .rankby(RankBy.DISTANCE))
-        .results
-    googleResponse
+        .rankby(RankBy.DISTANCE)
+
+    if(pageToken){
+      req.pageToken(pageToken)
+    }
+
+    doCall(req)
   }
 }

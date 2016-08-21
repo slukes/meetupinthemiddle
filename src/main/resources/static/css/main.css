@@ -41,6 +41,17 @@ html, body {
     cursor: pointer;
 }
 
+.starContainer{
+    margin-left: 1px;
+}
+
+.star{
+    color : #c6a200;
+    font-style: italic;
+    font-size: 0.75em;
+    vertical-align: super;
+}
+
 hr {
     margin-bottom: 0;
 }

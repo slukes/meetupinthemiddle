@@ -39,7 +39,7 @@ public class GoogleMapsPOIFinderUsingKeywordTest {
   public void testApiIsCalled() throws Exception {
     mockGoogle();
 
-    googleMapsPoiFinder.doSearch(new LatLong(10, 10), MEETING);
+    googleMapsPoiFinder.doSearch(new LatLong(10, 10), MEETING, null);
 
     verifyStatic();
     ArgumentCaptor<LatLng> argumentCaptor = ArgumentCaptor.forClass(LatLng.class);

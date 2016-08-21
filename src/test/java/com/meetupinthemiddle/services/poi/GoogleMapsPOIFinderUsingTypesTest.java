@@ -40,7 +40,7 @@ public class GoogleMapsPOIFinderUsingTypesTest {
   public void testApiIsCalled() throws Exception {
     mockGoogle();
 
-    googleMapsPoiFinder.doSearch(new LatLong(10, 10), RESTAURANT);
+    googleMapsPoiFinder.doSearch(new LatLong(10, 10), RESTAURANT, null);
 
     verifyStatic();
     ArgumentCaptor<LatLng> argumentCaptor = ArgumentCaptor.forClass(LatLng.class);

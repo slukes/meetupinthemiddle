@@ -1,6 +1,7 @@
 <section xmlns:th="http://www.thymeleaf.org" id="resultsOverlayContent" class="overlayContent">
     <h2>The middle is</h2>
-    <span id="midpoint"><strong><em th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong></span>
+    <span id="midpoint"><strong><em
+            th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong></span>
 
     <table class="table" id="peopleTable">
         <tbody>
@@ -22,8 +23,16 @@
             </td>
             <td>
                 <span class="poiMarker glyphicon glyphicon-map-marker"></span>
+            <td>
+                <th:block th:text="${POI.name}"/>
+                <span class="starContainer" th:title="|${POI.rating} star rated|">
+                    <span th:if="${POI.rating gt 0.0}" th:each="i : ${#numbers.sequence(1, T(Math).floor(POI.rating))}"
+                          class="star fa fa-star"></span>
+                    <span th:if="${POI.rating mod 1.0 ge 0.5}" class="star fa fa-star-half-o"></span>
+                    <span th:each="i : ${#numbers.sequence(T(Math).round(POI.rating),4)}"
+                          class="star fa fa-star-o"></span>
+                </span>
             </td>
-            <td th:text="${POI.name}"></td>
         </tr>
         </tbody>
     </table>

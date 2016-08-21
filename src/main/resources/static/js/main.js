@@ -232,7 +232,7 @@ function initAutocomplete() {
     function Person(name, from, latLng, transportMode) {
       this.name = name;
       this.from = from;
-      this.latLng = latLng;
+      this.latLong = latLng;
       this.transportMode = transportMode;
       this.id = personId;
 
@@ -253,6 +253,7 @@ function initAutocomplete() {
         this.name = name;
         this.from = from;
         this.transportMode = transportMode;
+        people[this.id].transportIcon = this.transportMode === "DRIVING" ? "car" : "bus";
 
         //If we were editing a person we need to replace their table row.
         //We could try and update the existing one - but it would be more fragile to changes in the markup
