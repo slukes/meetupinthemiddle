@@ -65,8 +65,7 @@ footer {
 }
 
 #logo {
-    max-height: 10%;
-    float: left;
+    width: 20%;
 }
 
 #peopleTable td {
