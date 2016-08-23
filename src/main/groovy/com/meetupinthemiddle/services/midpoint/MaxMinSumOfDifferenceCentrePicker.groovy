@@ -1,5 +1,6 @@
 package com.meetupinthemiddle.services.midpoint
 
+import com.meetupinthemiddle.exceptions.NoResultsException
 import com.meetupinthemiddle.model.CentrePoint
 import com.meetupinthemiddle.model.LatLong
 import com.meetupinthemiddle.model.Person
@@ -13,6 +14,10 @@ class MaxMinSumOfDifferenceCentrePicker implements CentrePicker {
     //Remove nulls
     allTimes = allTimes.findAll {
       it?.value?.size() == people.size() && !it.value.contains(null)
+    }
+
+    if(allTimes.size() < 1){
+      throw new NoResultsException()
     }
 
     def initialMaxSum =

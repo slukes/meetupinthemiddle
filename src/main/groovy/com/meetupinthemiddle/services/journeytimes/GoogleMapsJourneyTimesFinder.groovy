@@ -15,6 +15,7 @@ import static com.google.maps.DistanceMatrixApi.newRequest
 import static com.google.maps.model.TravelMode.TRANSIT
 import static com.meetupinthemiddle.model.TransportMode.DRIVING
 import static com.meetupinthemiddle.model.TransportMode.PUBLIC
+import static org.springframework.util.StringUtils.endsWithIgnoreCase
 
 @Service
 class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<DistanceMatrix, DistanceMatrixApiRequest> implements JourneyTimesFinder {
@@ -29,8 +30,8 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
     def publicResults = []
     def drivingResults = []
     def (drivingPeople, publicPeople) = people.split { it.transportMode == DRIVING }
-    LatLng[] publicGmStarts = getGoogleStartsForPeople(publicPeople)
-    LatLng[] drivingGmStarts = getGoogleStartsForPeople(drivingPeople)
+    String[] publicGmStarts = getGoogleStartsForPeople(publicPeople)
+    String[] drivingGmStarts = getGoogleStartsForPeople(drivingPeople)
     def gmDestinations = mapDestinations(points)
 
     gmDestinations.collate(MAX_PER_REQ).each {
@@ -56,7 +57,7 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
     result
   }
 
-  private doBatch(LatLng[] gmStarts, LatLng[] batch, mode) {
+  private doBatch(String[] gmStarts, LatLng[] batch, mode) {
     if (gmStarts.length > 0) {
       doGoogleMapsRequest(gmStarts, batch, TRANSPORT_MODE_TO_GOOGLE_MODEL[mode])
     }
@@ -68,7 +69,16 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
   }
 
   private getGoogleStartsForPeople(List<Person> people) {
-    people.collect { new LatLng(it.latLong.lat, it.latLong.lng) }
+    //It is not reliable to use the geocodes on the front end in this service!
+    //Instead use place names as entered by the user and let GM geocode it transparently.
+    //concat ,UK
+    people.collect {
+      def from = it.from
+      if (!endsWithIgnoreCase(from, "uk")) {
+        from = "$from, UK"
+      }
+      from
+    }
   }
 
   private addResults(List<Person> people, DistanceMatrix resp, List<LatLng> points, Map<LatLong, List<Integer>> result) {
@@ -90,7 +100,7 @@ class GoogleMapsJourneyTimesFinder extends AbstractConcurrentGoogleMapsService<D
     }
   }
 
-  private Future<DistanceMatrix> doGoogleMapsRequest(LatLng[] origins, LatLng[] points, TravelMode mode) {
+  private Future<DistanceMatrix> doGoogleMapsRequest(String[] origins, LatLng[] points, TravelMode mode) {
     doConcurrentCall(
         newRequest(context)
             .mode(mode)

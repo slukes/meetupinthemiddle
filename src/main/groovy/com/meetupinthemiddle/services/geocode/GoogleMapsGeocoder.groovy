@@ -24,7 +24,13 @@ class GoogleMapsGeocoder extends AbstractGoogleMapsService<GeocodingResult[], Ge
 
   @Override
   @Cacheable("geocodes")
-  LatLong geocode(final String location) {
+  LatLong geocode(String location) {
+    //Google maps appears to ignore the regions / bounds hint.
+    //See: http://stackoverflow.com/questions/2647086/googles-geocoder-returns-wrong-country-ignoring-the-region-hint
+    if(!location.endsWith("UK") && !location.endsWith("uk")){
+      location = location.concat(", UK")
+    }
+
     def resp = doCall(GeocodingApi.geocode(context, location))
     if (resp.length > 0) {
       def result = resp.find {

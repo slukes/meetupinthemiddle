@@ -1,5 +1,4 @@
 package com.meetupinthemiddle.controllers
-
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
 import com.meetupinthemiddle.exceptions.OverQuotaException
@@ -40,6 +39,10 @@ class SearchController {
       throw new InvalidBodyException(bindingResult.fieldErrors)
     }
 
+    performSearch(request)
+  }
+
+  private Response performSearch(Request request) {
     def response = meetUpFacade.doSearch(request)
 
     def ctx = new Context()

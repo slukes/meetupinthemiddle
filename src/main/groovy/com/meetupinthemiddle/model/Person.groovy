@@ -14,6 +14,7 @@ class Person {
   long travelTime
   @NotNull
   String from
+  //Not currently used, but might be by a future implementation
   LatLong latLong
   @NotNull
   TransportMode transportMode

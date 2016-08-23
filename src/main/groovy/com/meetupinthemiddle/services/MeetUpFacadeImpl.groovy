@@ -27,19 +27,19 @@ class MeetUpFacadeImpl implements MeetUpFacade {
   @Override
   Response doSearch(Request request) {
     setLatLongs(request.people)
-    def midPointAndTimes = allMidpointFinder.findMidpoint(request.people as List<Person>)
-    def midPoint = midPointAndTimes.getFirst()
-    def pois = poiFinderRouter.findPOIs(midPoint.latLong, 5, request.poiType)
+      def midPointAndTimes = allMidpointFinder.findMidpoint(request.people as List<Person>)
+      def midPoint = midPointAndTimes.getFirst()
+      def pois = poiFinderRouter.findPOIs(midPoint.latLong, 5, request.poiType)
 
-    setTravelTimes(request.people, midPointAndTimes.second)
+      setTravelTimes(request.people, midPointAndTimes.second)
 
-    Response.builder()
-        .people(request.people as Person[])
-        .centrePoint(midPoint)
-        .poiType(request.poiType)
-        .POIs(pois)
-        .build()
-  }
+      Response.builder()
+          .people(request.people as Person[])
+          .centrePoint(midPoint)
+          .poiType(request.poiType)
+          .POIs(pois)
+          .build()
+    }
 
   private setTravelTimes(List<Person> people, Map<Person, Long> times) {
     people.each {

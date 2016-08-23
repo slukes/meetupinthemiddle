@@ -1,4 +1,5 @@
 package com.meetupinthemiddle.model
+
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.builder.Builder
 

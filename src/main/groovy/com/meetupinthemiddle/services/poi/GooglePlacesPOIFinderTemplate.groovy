@@ -20,12 +20,12 @@ abstract class GooglePlacesPOIFinderTemplate extends AbstractGoogleMapsService<P
   @Value('${google.maps.photos.url}')
   private String photoUrlFormat
 
-  //Google maps likes to returns things like Greggs as a restaurant
+  //Google maps likes to returns things like Greggs and even SHELL as restaurants
   // and Oceana as a pub.  Filter out these categories to avoid this.
   // Ideally I would find an alternative provider with better data, since its not ideal
   // to exclude all restaurants who also happen to do takeaway.
   private static final List<String> DISALLOWED_TERMS =
-      ["meal_takeaway", "meal_delivery", "cafe", "night_club"]
+      ["meal_takeaway", "meal_delivery", "cafe", "night_club", "gas_station"]
 
   @Override
   @Cacheable("pois")
