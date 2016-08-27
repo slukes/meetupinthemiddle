@@ -2,6 +2,13 @@ a {
     color: navy;
 }
 
+#logo {
+    height: 100px;
+    text-indent: -9999px;
+    background-repeat: no-repeat;
+    background-image: url(/img/logo100H.png);
+}
+
 .top-bar {
     width: 100%;
     z-index: 1;
@@ -41,12 +48,12 @@ html, body {
     cursor: pointer;
 }
 
-.starContainer{
+.starContainer {
     margin-left: 1px;
 }
 
-.star{
-    color : #c6a200;
+.star {
+    color: #c6a200;
     font-style: italic;
     font-size: 0.75em;
     vertical-align: super;
@@ -64,16 +71,12 @@ footer {
     height: 76%;
 }
 
-#logo {
-    width: 20%;
-}
-
 #peopleTable td {
     border: none
 }
 
 #tooltip {
-    margin-bottom:10px;
+    margin-bottom: 10px;
     cursor: help;
 }
 
@@ -184,6 +187,9 @@ tr.disabled {
     #grip {
         display: none;
     }
+
+
+
 }
 
 /*mobile*/
@@ -200,11 +206,18 @@ tr.disabled {
         font-size: 1.5em;
     }
 
-    #showArrows{
+    #showArrows {
         display: none;
     }
 
-    #hideArrows{
+    #hideArrows {
         display: block;
+    }
+
+    #logo {
+        height: 100px;
+        text-indent: -9999px;
+        background-repeat: no-repeat;
+        background-image: url(/img/logo320W.png);
     }
 }

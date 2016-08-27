@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
+import javax.sql.DataSource
+
 import static com.meetupinthemiddle.services.midpoint.trainStation.TrainStationDao.TrainStation.Size.*
 
 @Repository
@@ -24,6 +26,8 @@ class TrainStationDao {
 
   @Autowired
   private NamedParameterJdbcTemplate jdbcTemplate
+
+  @Autowired DataSource dataSource
 
   List<TrainStation> findStations(BoundingBox boundingBox) {
     MapSqlParameterSource params = getParamMap(boundingBox)

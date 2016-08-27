@@ -1,5 +1,4 @@
 package com.meetupinthemiddle
-
 import com.google.maps.GeoApiContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication

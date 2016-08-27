@@ -4,6 +4,15 @@
             th:text="${response.centrePoint.postCode} + ', ' + ${response.centrePoint.locality}"></em></strong></span>
 
     <table class="table" id="peopleTable">
+        <caption class="sr-only">the people who will be coming to your MeetUpInTheMiddle</caption>
+        <thead class="sr-only">
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Name</th>
+            <th scope="col">Travelling from</th>
+            <th scope="col">Journey time</th>
+        </tr>
+        </thead>
         <tbody>
         <tr class="personRow" th:each="person : ${response.people}">
             <td><span class="personMarker glyphicon glyphicon-map-marker"></span></td>
@@ -16,6 +25,14 @@
 
     <h3 th:text="'Local ' + ${response.poiType.text}"></h3>
     <table id="poiTable" class="table">
+        <caption class="sr-only" th:text="|${response.poiType.text}s near the midpoint|"></caption>
+        <thead class="sr-only">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">POI Name</th>
+            </tr>
+        </thead>
         <tbody>
         <tr th:each="POI, itr : ${response.POIs}">
             <td>

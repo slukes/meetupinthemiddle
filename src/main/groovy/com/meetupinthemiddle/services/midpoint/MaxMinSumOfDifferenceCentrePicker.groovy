@@ -57,8 +57,6 @@ class MaxMinSumOfDifferenceCentrePicker implements CentrePicker {
     }
 
     if(candidateTimes.size() > 0){
-      println maxPercentStDev
-      println maxTotalAllowable
       candidateTimes
     } else {
       getCandidatePoints(allTimes, maxTotalAllowable * 1.01, maxPercentStDev + 0.01)

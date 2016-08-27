@@ -46,7 +46,18 @@
                 <span aria-hidden="true" class="fa fa-plus-circle fa-2x pull-right disabled"
                       title="Click to add this person to your search"></span>
             </a>
-            <table class="table" id="peopleTable" aria-label="the people who will be coming to your MeetUpInTheMiddle">
+            <table class="table" id="peopleTable">
+                <caption class="sr-only">the people who will be coming to your MeetUpInTheMiddle</caption>
+                <thead class="sr-only">
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Travelling from</th>
+                    <th scope="col">Travelling by</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Remove</th>
+                </tr>
+                </thead>
                 <tbody>
                 <tr>
                 </tr>
@@ -56,10 +67,9 @@
                 <option th:each="type : ${T(com.meetupinthemiddle.model.POIType).values()}"
                         th:value="${type}" th:text="${type.getText()} + ' in the middle'"></option>
             </select>
-            <button type="button" role="button" title="perform search" disabled id="submitButton"
+            <input type="submit" title="perform search" value="MeetUpInTheMiddle!" disabled id="submitButton"
                     class="btn btn-primary btn-block">
-                MeetUpInTheMiddle!
-            </button>
+            </input>
         </form>
     </section>
     <section id="share" th:replace="fragments/social :: share"></section>

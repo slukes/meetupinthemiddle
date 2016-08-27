@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.meetupinthemiddle.exceptions.InvalidBodyException
 import com.meetupinthemiddle.exceptions.OverQuotaException
 import com.meetupinthemiddle.model.ErrorResponse
+import com.meetupinthemiddle.model.PreviousSearches
 import com.meetupinthemiddle.model.Request
 import com.meetupinthemiddle.model.Response
 import com.meetupinthemiddle.services.MeetUpFacade
@@ -32,12 +33,17 @@ class SearchController {
   @Autowired
   private TemplateEngine templateEngine
 
+  @Autowired
+  PreviousSearches previousSearches
+
   @RequestMapping(path = "/search", method = POST, produces = "application/json")
   @ResponseBody
   Response search(@Valid @RequestBody Request request, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       throw new InvalidBodyException(bindingResult.fieldErrors)
     }
+
+    previousSearches.requests << request
 
     performSearch(request)
   }
