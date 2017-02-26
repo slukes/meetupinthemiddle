@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: head-elements(true)"></head>
+<body>
+<header th:replace="fragments/layout :: header"></header>
+<main id="overlay">
+    <section id="grip">
+        <i class="fa fa-angle-double-left fa-lg pull-right" id="hideArrows" aria-hidden="true"></i>
+        <i class="fa fa-angle-double-right fa-lg pull-right" id="showArrows" aria-hidden="true" hidden="hidden"></i>
+    </section>
+    <section id="searchoverlayContent" class="overlayContent">
+        <section class="row">
+            <span id="tooltip" class="glyphicon glyphicon-question-sign pull-left" aria-hidden="true"
+                  data-toggle="tooltip" data-placement="bottom"
+                  title="Get started by entering the names, start locations and transport methods of each person you're meeting">
+            </span>
+        </section>
+        <section id="error-section" class="alert alert-danger"
+                 th:attrappend="hidden=${errornotfound == null} ? 'true' : 'false'" role="alert">
+            <span th:if="${errornotfound != null}" class="glyphicon glyphicon-exclamation-sign"></span>
+            <th:block th:if="${errornotfound != null}">Ooops! We dont know about a page called <span
+                    class="error-message" th:text="${errornotfound}">.</span></th:block>
+        </section>
+
+        <form action="#" method="post" role="form" autocomplete="off" id="newPersonForm">
+            <input class="form-control person-form-control" type="text" id="newName" placeholder="name"
+                   title="the name of the person"/>
+
+            <input class="form-control person-form-control" type="text" id="newFrom"
+                   title="the location that the person is starting from e.g. a town, address or postcode"
+                   placeholder="traveling from"/>
+
+            <section class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="newMode" value="DRIVING" title="this person is driving" autocomplete="off" checked="checked" />
+                    <i class="fa fa-car fa-lg fa-fw" aria-hidden="true"></i>
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="newMode" title="this person is coming by public transport" value="PUBLIC" autocomplete="off" />
+                    <i class="fa fa-bus fa-lg fa-fw" aria-hidden="true"></i>
+                </label>
+            </section>
+
+            <section></section>
+            <a id="add-person" aria-label="Add person">
+                <span aria-hidden="true" class="fa fa-plus-circle fa-2x pull-right disabled"
+                      title="Click to add this person to your search"></span>
+            </a>
+            <table class="table" id="peopleTable">
+                <caption class="sr-only">the people who will be coming to your MeetUpInTheMiddle</caption>
+                <thead class="sr-only">
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Travelling from</th>
+                    <th scope="col">Travelling by</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Remove</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                </tr>
+                </tbody>
+            </table>
+            <select id="poi" title="Type of place to meet" class="form-control">
+                <option th:each="type : ${T(com.meetupinthemiddle.model.POIType).values()}"
+                        th:value="${type}" th:text="${type.getText()} + ' in the middle'"></option>
+            </select>
+            <input type="submit" title="perform search" value="MeetUpInTheMiddle!" disabled="disabled" id="submitButton"
+                    class="btn btn-primary btn-block">
+            </input>
+        </form>
+    </section>
+    <section id="share" th:replace="fragments/social :: share"></section>
+</main>
+<section class="" id="map" th:attr="data-test=${isTest}"></section>
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+<th:block th:replace="fragments/mustache :: templates"/>
+</html>

@@ -1,0 +1,53 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head-elements(map)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>MeetUpInTheMiddle</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+    <script th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.7/js/tooltip.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.7/js/alert.js}"></script>
+    <script th:src="@{/webjars/bootstrap/3.3.7/js/button.js}"></script>
+    <script th:src="@{/webjars/mustachejs/2.2.1/mustache.min.js}"></script>
+    <script th:src="@{/js/cookie.js}"></script>
+    <!--/*This version of thymeleaf has an open bug with th:if on th:block, hence repetition of if*/-->
+    <script th:if="${map}" th:src="@{/js/fitBoundsPadding.js}"></script>
+    <script th:if="${map}" th:src="@{/js/mappage.js}"></script>
+    <script th:if="${map}"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiMgEOqF4tK7vvUTBftuowg4sIJS85gWk&amp;callback=initMap&amp;v=3.24&amp;libraries=places&amp;region=gb"
+            async="async" defer="defer"></script>
+
+</head>
+
+<header th:fragment="header">
+    <section th:if="${contact_success} == true" class="alert alert-success" id="mail-bar" role="alert">
+        <p>Message Sent Successfully</p>
+    </section>
+    <section class="alert alert-warning alert-dismissible top-bar" hidden="hidden" id="cookie-bar" role="alert">
+        <button type="button" class="close" id="close-cookie-bar" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <p>By using MeetUpInTheMiddle you are consenting to our use of cookies to improve your experience.</p>
+    </section>
+    <noscript>
+        <section class="alert alert-danger top-bar" role="alert">
+            <p><strong>This site requires JavaScript to work. Please enable JavaScript and refresh the page.</strong>
+            </p>
+        </section>
+    </noscript>
+    <section class="row">
+        <section href="/" id="logo" title="MeetUpInTheMiddle">MeetUpInTheMiddle.com</section>
+    </section>
+    <section th:if="${isTest} == true">
+        <p>---TEST MODE---</p>
+    </section>
+</header>
+
+<footer th:fragment="footer">
+    <section class="span12">
+        <hr/>
+    </section>
+    <a href="/contact">Contact</a> | <a href="/terms">Terms and Conditions</a>
+</footer>
+</html>
