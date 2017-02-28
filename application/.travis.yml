@@ -1,0 +1,6 @@
+language: java
+jdk: oraclejdk8
+script:
+  - cd application && mvn package -DskipTests
+  - mvn test
+  - java -jar target/application-*.jar && cd ../acceptance-tests && mvn test
